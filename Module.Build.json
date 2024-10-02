@@ -14,7 +14,7 @@
       "MsSqlScript": null
     },
     "Version": "9.3.0",
-    "ImagePath": "./kinesis.png",
+    "ImagePath": "https://github.com/zitacconsulting/Decisions.Kinesis/blob/main/kinesis.png?raw=true",
     "Dependencies": [{
         "ModuleName": "Decisions.MessageQueues.zip",
         "AutoInstall": true
@@ -23,5 +23,5 @@
         "ModuleName": "Decisions.AWS.zip",
         "AutoInstall": true
       }],
-    "Description": "This module will let you listen on Kinesis streams using Decisions. Kinesis stream listeners are handled in the same way as Message Queues"
+    "Description": "The Kinesis module integrates Amazon Kinesis, a powerful, real-time data streaming service, into the Decisions platform. Amazon Kinesis enables the collection, processing, and analysis of streaming data at any scale, making it ideal for handling large volumes of data from various sources in real-time."
 }
