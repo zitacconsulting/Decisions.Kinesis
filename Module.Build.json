@@ -1,0 +1,27 @@
+{
+	"Resources": {
+	  "NoComponents": true,
+      "CoreServicesDlls": [
+        "./Decisions.Kinesis/bin/Debug/net8.0/Decisions.Kinesis.dll"
+      ],
+      "CliDlls": null,
+      "WebPages": null,
+      "SilverlightDlls": null,
+      "AgentDlls": null,
+      "InstallScript": null,
+      "SqlScripts": null,
+      "ObjectsToImport": null,
+      "MsSqlScript": null
+    },
+    "Version": "9.3.0",
+    "ImagePath": "./kinesis.png",
+    "Dependencies": [{
+        "ModuleName": "Decisions.MessageQueues.zip",
+        "AutoInstall": true
+      },
+      {
+        "ModuleName": "Decisions.AWS.zip",
+        "AutoInstall": true
+      }],
+    "Description": "This module will let you listen on Kinesis streams using Decisions. Kinesis stream listeners are handled in the same way as Message Queues"
+}

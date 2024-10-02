@@ -1,0 +1,10 @@
+.vscode/*
+AWSSDK.Core.dll
+AWSSDK.Kinesis.dll
+AWSSDK.SecurityToken.dll
+Decisions.AWS.zip
+Decisions.MessageQueues.dll
+Decisions.MessageQueues.zip
+Decisions.AWS/*
+Decisions.Kinesis/bin/*
+Decisions.Kinesis/obj/*

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="DecisionsSDK" Version="9.1.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="DecisionsMessageQueues">
+			<HintPath>..\Decisions.MessageQueues.dll</HintPath>
+		</Reference>
+		<Reference Include="Amazon.Kinesis">
+			<HintPath>..\AWSSDK.Kinesis.dll</HintPath>
+		</Reference>
+		<Reference Include="Amazon.SecurityToken">
+			<HintPath>..\AWSSDK.SecurityToken.dll</HintPath>
+		</Reference>
+    <Reference Include="Amazon">
+			<HintPath>..\AWSSDK.Core.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+</Project>
