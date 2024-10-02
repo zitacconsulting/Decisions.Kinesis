@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="build_all">
     
     <Target Name="build_all">
-        <Exec Command="dotnet publish ./Decisions.Kinesis/Decisions.Kinesis.csproj --runtime linux-x64 --self-contained false --output ./obj -c Debug" />
+        <Exec Command="dotnet publish ./Decisions.Kinesis/Decisions.Kinesis.csproj --runtime linux-x64 --self-contained false --output ./Decisions.Kinesis/bin -c Debug" />
         <Exec Command="dotnet tool update --global CreateDecisionsModule-GlobalTool" />
         <CallTarget Targets="build_module"/>
     </Target>
