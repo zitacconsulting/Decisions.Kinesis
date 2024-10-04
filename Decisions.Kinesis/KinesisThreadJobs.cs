@@ -18,9 +18,6 @@ namespace Decisions.KinesisMessageQueue
         private static readonly Log log = new Log("KinesisThreadJob");
         public override string LogCategory => "Kinesis Flow Worker";
 
-        // Time interval between polling for available shards
-        private static readonly int SHARD_POLL_INTERVAL = 5000; // 5 seconds
-
         protected AmazonKinesisClient KinesisClient;
         protected string StreamName;
         private string threadId;
@@ -56,8 +53,8 @@ namespace Decisions.KinesisMessageQueue
                 log.Error(ex, "Error in ReceiveMessages");
                 // Consider implementing an alerting mechanism here
             }
-            log.Debug($"Sleeping for {SHARD_POLL_INTERVAL}ms before next poll");
-            Thread.Sleep(SHARD_POLL_INTERVAL);
+            log.Debug($"Sleeping for {TimeSpan.FromSeconds(queueDefinition.ShardPollInterval)}ms before next poll");
+            Thread.Sleep(TimeSpan.FromSeconds(queueDefinition.ShardPollInterval));
         }
 
         private void ProcessAvailableShards()
@@ -107,21 +104,32 @@ namespace Decisions.KinesisMessageQueue
         {
             log.Info($"Starting to process shard: {shardId}");
             int retryCount = 0;
-            while (retryCount < queueDefinition.MaxRetries)
+            string shardIterator = null;
+            try
             {
-                try
+                // Get the shard iterator to start reading from the shard
+                shardIterator = GetShardIterator(shardId);
+                if (shardIterator == null)
                 {
-                    // Get the shard iterator to start reading from the shard
-                    string shardIterator = GetShardIterator(shardId);
-                    if (shardIterator == null)
-                    {
-                        log.Warn($"Failed to get shard iterator for shard: {shardId}");
-                        break;
-                    }
+                    log.Warn($"Shard Iterator is null for shard: {shardId}");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex, $"Failed fetching shard iterator for shard: {shardId}\nError: {ex.Message}");
+                return;
+            }
 
+            while (shardIterator != null)
+            {
+                retryCount = 0;
+                while (retryCount < queueDefinition.MaxRetries)
+                {
                     string lastProcessedSequenceNumber = null;
+                    GetRecordsResponse getRecordsResponse = null;
 
-                    while (shardIterator != null)
+                    try
                     {
                         var getRecordsRequest = new GetRecordsRequest
                         {
@@ -130,8 +138,9 @@ namespace Decisions.KinesisMessageQueue
                         };
 
                         log.Debug($"Fetching records for shard: {shardId}");
-                        var getRecordsResponse = Task.Run(() => KinesisClient.GetRecordsAsync(getRecordsRequest)).Result;
+                        getRecordsResponse = Task.Run(() => KinesisClient.GetRecordsAsync(getRecordsRequest)).Result;
 
+                        // Process records
                         if (getRecordsResponse.Records.Count > 0)
                         {
                             log.Info($"Retrieved {getRecordsResponse.Records.Count} records from shard: {shardId}");
@@ -140,7 +149,6 @@ namespace Decisions.KinesisMessageQueue
                             {
                                 try
                                 {
-                                    // Process each record
                                     ProcessRecord(record);
                                     lastProcessedSequenceNumber = record.SequenceNumber;
                                 }
@@ -158,52 +166,78 @@ namespace Decisions.KinesisMessageQueue
                                 log.Debug($"Saving checkpoint for shard: {shardId}, sequence number: {lastProcessedSequenceNumber}");
                                 KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, lastProcessedSequenceNumber);
                             }
+
+                            // Determine wait time based on record count
+                            if (getRecordsResponse.Records.Count >= queueDefinition.MaxRecordsPerRequest)
+                            {
+                                log.Debug($"Maximum records processed for shard: {shardId}. Using batch wait time.");
+                                Thread.Sleep(queueDefinition.ShardBatchWaitTime);
+                            }
+                            else
+                            {
+                                log.Debug($"All records processed for shard: {shardId}. Using standard poll interval.");
+                                Thread.Sleep(TimeSpan.FromSeconds(queueDefinition.ShardPollInterval));
+                            }
                         }
                         else
                         {
                             log.Debug($"No records retrieved for shard: {shardId}");
+                            Thread.Sleep(TimeSpan.FromSeconds(queueDefinition.ShardPollInterval));
                             IsActive = false;
                         }
+
+                        // Reset retry count on successful execution
+                        retryCount = 0;
                         // Get the next shard iterator for the next read
                         shardIterator = getRecordsResponse.NextShardIterator;
+                        break; // Exit the retry loop on success
                     }
-
-                    log.Info($"Finished processing shard: {shardId}");
-                    break;
-                }
-
-                catch (AggregateException ae)
-                {
-                    // Unwrap the AggregateException to get the actual exception
-                    var innerException = ae.InnerExceptions[0];
-                    if (innerException is AmazonKinesisException akex)
+                    catch (AggregateException ae)
+                    {
+                        // Unwrap the AggregateException
+                        var innerException = ae.InnerExceptions.FirstOrDefault();
+                        if (innerException is ProvisionedThroughputExceededException pte)
+                        {
+                            retryCount++;
+                            log.Error(pte, $"Throughput exceeded when fetching records from {shardId}. Retry {retryCount}/{queueDefinition.MaxRetries}");
+                            Thread.Sleep(GetBackoffTime(retryCount)); // Exponential backoff
+                        }
+                        else
+                        {
+                            retryCount++;
+                            log.Error(innerException, $"Error fetching records from {shardId}. Retry {retryCount}/{queueDefinition.MaxRetries}\n{innerException.Message}");
+                            Thread.Sleep(GetBackoffTime(retryCount));  // Exponential backoff
+                        }
+                    }
+                    catch (Exception ex)
                     {
                         retryCount++;
-                        log.Error(akex, $"Error processing shard {shardId}. Retry {retryCount}/{queueDefinition.MaxRetries}");
-                        Thread.Sleep(1000 * retryCount); // Exponential backoff
-                    }
-                    else
-                    {
-                        retryCount++;
-                        log.Error(innerException, $"Error processing shard {shardId}. Retry {retryCount}/{queueDefinition.MaxRetries}");
-                        Thread.Sleep(1000 * retryCount); // Exponential backoff
+                        log.Error(ex, $"Unexpected error fetching records from {shardId}. Retry {retryCount}/{queueDefinition.MaxRetries}\n{ex.Message}");
+                        Thread.Sleep(GetBackoffTime(retryCount));  // Exponential backoff
                     }
                 }
-                catch (Exception ex)
+
+                if (retryCount == queueDefinition.MaxRetries)
                 {
-                    retryCount++;
-                    log.Error(ex, $"Error processing shard {shardId}. Retry {retryCount}/{queueDefinition.MaxRetries}");
-                    Thread.Sleep(1000 * retryCount); // Exponential backoff
+                    log.Error($"Failed to process shard {shardId} after {queueDefinition.MaxRetries} attempts");
+                    // Consider implementing a dead-letter queue or alerting mechanism here
+                    break; // Exit the outer loop if max retries are reached
                 }
             }
 
-            if (retryCount == queueDefinition.MaxRetries)
-            {
-                log.Error($"Failed to process shard {shardId} after {queueDefinition.MaxRetries} attempts");
-                // Consider implementing a dead-letter queue or alerting mechanism here
-            }
+            log.Info($"Stopped processing shard: {shardId}");
         }
+        private TimeSpan GetBackoffTime(int retryCount)
+        {
+            // Exponential backoff with a max of 30 seconds
+            int backoffSeconds = Math.Min((int)Math.Pow(2, retryCount), 30);
 
+            // Add jitter
+            Random random = new Random();
+            int jitterSeconds = random.Next(0, 1000) / 1000;  // Random milliseconds
+
+            return TimeSpan.FromSeconds(backoffSeconds + jitterSeconds);
+        }
         private void ProcessRecord(Record record)
         {
             log.Debug($"Processing record: {record.SequenceNumber}");

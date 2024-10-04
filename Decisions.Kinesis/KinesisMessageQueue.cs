@@ -110,6 +110,47 @@ namespace Decisions.KinesisMessageQueue
             }
         }
 
+        [ReadonlyEditor]
+        [PropertyClassification(2, "Polling Settings", new string[] { "2 Advanced" })]
+        public string InputTypeANote2
+        {
+            get => "'Shard Poll Interval' defines how long to wait before checking for new messages in the shard. 'Shard Wait Between Batches Interval' defines how long to wait between batches if there are more messages than 'Max Records Per Requests' in the shard";
+            set
+            {
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        private int shardPollInterval = 5;
+
+        [DataMember]
+        [PropertyClassification(15, "Shard Poll Interval (seconds)", "2 Advanced")]
+        public int ShardPollInterval
+        {
+            get { return shardPollInterval; }
+            set
+            {
+                shardPollInterval = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        private int shardBatchWaitTime = 1;
+
+        [DataMember]
+        [PropertyClassification(16, "Shard Wait Between Batches Interval (seconds)", "2 Advanced")]
+        public int ShardBatchWaitTime
+        {
+            get { return shardBatchWaitTime; }
+            set
+            {
+                shardBatchWaitTime = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         [ORMField]

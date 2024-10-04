@@ -43,6 +43,7 @@ namespace Decisions.KinesisMessageQueue
             }
         }
 
+
         public static List<Shard> GetAvailableShards(AmazonKinesisClient client, string queueId, string streamName)
         {
             Log.Debug($"Getting available shards for stream: {streamName}, queue ID: {queueId}");
@@ -62,7 +63,6 @@ namespace Decisions.KinesisMessageQueue
                     };
 
                     Log.Debug($"Describing stream: {streamName}, starting from shard: {exclusiveStartShardId ?? "beginning"}");
-                    //var response = client.DescribeStreamAsync(request).Result;
                     var response = Task.Run(() => client.DescribeStreamAsync(request)).Result;
 
                     foreach (var shard in response.StreamDescription.Shards)
@@ -172,9 +172,7 @@ namespace Decisions.KinesisMessageQueue
                         string secretAccessKey = queueDefinition.OverrideSettings ? queueDefinition.SecretAccessKey : settings.SecretAccessKey;
                         return new BasicAWSCredentials(accessKeyId, secretAccessKey);
                     case "RoleARN":
-                        Log.Debug("Using RoleARN (AssumeRoleAWSCredentials)");
-                        string roleArn = queueDefinition.OverrideSettings ? queueDefinition.RoleArn : settings.RoleArn;
-                        return new AssumeRoleAWSCredentials(null, roleArn, "DecisionsKinesisSession");
+                        return GetEnvironmentAwareRoleCredentials(queueDefinition, settings);
                     default:
                         throw new ArgumentException($"Invalid authentication method: {authMethod}");
                 }
@@ -185,6 +183,63 @@ namespace Decisions.KinesisMessageQueue
                 throw new Exception($"Failed to get AWS credentials: {ex.Message}", ex);
             }
         }
+
+
+        private static AWSCredentials GetEnvironmentAwareRoleCredentials(KinesisMessageQueue queueDefinition, KinesisSettings settings)
+        {
+            string environment = DetectEnvironment();
+            string roleArn = queueDefinition.OverrideSettings ? queueDefinition.RoleArn : settings.RoleArn;
+
+            Log.Debug($"Detected environment: {environment}");
+
+            switch (environment)
+            {
+                case "ECS":
+                    Log.Debug("Using ECS Task Credentials for role assumption.");
+                    return new AssumeRoleAWSCredentials(new ECSTaskCredentials(), roleArn, "DecisionsKinesisSession");
+
+                case "EC2":
+                    Log.Debug("Using EC2 Instance Profile Credentials for role assumption.");
+                    return new AssumeRoleAWSCredentials(new InstanceProfileAWSCredentials(), roleArn, "DecisionsKinesisSession");
+
+                case "Container":
+                    Log.Debug("Running in a non-ECS container. Using environment variables for credentials.");
+                    return new AssumeRoleAWSCredentials(new EnvironmentVariablesAWSCredentials(), roleArn, "DecisionsKinesisSession");
+
+                case "WindowsServer":
+                    Log.Debug("Running on Windows Server. Using AWS SDK's default credential search order.");
+                    return new AssumeRoleAWSCredentials(FallbackCredentialsFactory.GetCredentials(), roleArn, "DecisionsKinesisSession");
+
+                default:
+                    Log.Warn("Unable to detect specific environment. Falling back to default credential provider chain.");
+                    return new AssumeRoleAWSCredentials(FallbackCredentialsFactory.GetCredentials(), roleArn, "DecisionsKinesisSession");
+            }
+        }
+
+        private static string DetectEnvironment()
+        {
+            // Check for ECS (container environment)
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI")))
+            {
+                return "ECS";
+            }
+
+            // Check for EC2 (could be container or Windows server)
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("EC2_INSTANCE_ID")))
+            {
+                return "EC2";
+            }
+
+            // Check if running in a container
+            if (File.Exists("/.dockerenv"))
+            {
+                return "Container";
+            }
+
+            // If none of the above, assume it's a Windows server
+            return "WindowsServer";
+        }
+
 
         /// Extracts metadata from a Kinesis record.
         internal static List<DataPair> GetRecordMetadata(Record record)

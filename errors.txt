@@ -1,0 +1,1499 @@
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:56 INF] KinesisThreadJob cleaned up successfully
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:56 DBG] Currently Running Kinesis Message Threads: 0, Consecutive Failed Threads: 0
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:56 DBG] Exiting loop on thread Products QA Stream-KinesisThreadJob-01J98WT4VP998V11S790HFGHQK.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:56 INF] Cleaning up KinesisThreadJob. ThreadId: ip-10-101-182-112-ae402eb5-d03d-48f1-bfc1-23f047b37dbb
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:50 DBG] Sleeping for 5000ms before next poll
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:50 ERR] Failed to process shard shardId-000000000000 after 3 attempts
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:50 DBG] Releasing lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:48 ERR] Error processing shard shardId-000000000000. Retry 3/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:48 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:48 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:48 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:48 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 ERR] Error processing shard shardId-000000000000. Retry 2/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 WRN] Unregistering queue 'Products QA Stream' from messaging service.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 DBG] Disposing KinesisMessageQueueImpl for stream: eventbus_qa_products
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 INF] Successfully disposed KinesisMessageQueueImpl for stream: eventbus_qa_products
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:45 DBG] Kinesis queue 'Products QA Stream' being shut down, stopping message handler threads
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 ERR] Error processing shard shardId-000000000000. Retry 1/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 INF] Acquired lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 INF] Starting to process shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Found available shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] No more shards available
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 INF] Retrieved 1 available shards for stream: eventbus_qa_products
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 INF] Found 1 available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Attempting to acquire lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Starting to process available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Getting available shards for stream: eventbus_qa_products, queue ID: 01J96YGCADW51FHK9XNRB7QHVB
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:44 DBG] Describing stream: eventbus_qa_products, starting from shard: beginning
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:39 DBG] Sleeping for 5000ms before next poll
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:39 DBG] Releasing lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:39 ERR] Failed to process shard shardId-000000000000 after 3 attempts
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 ERR] Error processing shard shardId-000000000000. Retry 3/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:36 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:34 ERR] Error processing shard shardId-000000000000. Retry 2/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:33 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:33 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:33 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:33 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:33 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:33 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 ERR] Error processing shard shardId-000000000000. Retry 1/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 INF] Acquired lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 INF] Starting to process shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Found available shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] No more shards available
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 INF] Retrieved 1 available shards for stream: eventbus_qa_products
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 INF] Found 1 available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Attempting to acquire lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Starting to process available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Getting available shards for stream: eventbus_qa_products, queue ID: 01J96YGCADW51FHK9XNRB7QHVB
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:32 DBG] Describing stream: eventbus_qa_products, starting from shard: beginning
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:27 DBG] Sleeping for 5000ms before next poll
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:27 ERR] Failed to process shard shardId-000000000000 after 3 attempts
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:27 DBG] Releasing lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 ERR] Error processing shard shardId-000000000000. Retry 3/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:24 DBG] Not spawning threads: active count 0, running count 1, max count 1
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:22 ERR] Error processing shard shardId-000000000000. Retry 2/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:22 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:22 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:22 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:22 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 ERR] Error processing shard shardId-000000000000. Retry 1/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 INF] Acquired lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 INF] Starting to process shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Found available shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] No more shards available
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 INF] Retrieved 1 available shards for stream: eventbus_qa_products
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 INF] Found 1 available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Attempting to acquire lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Starting to process available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Getting available shards for stream: eventbus_qa_products, queue ID: 01J96YGCADW51FHK9XNRB7QHVB
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:21 DBG] Describing stream: eventbus_qa_products, starting from shard: beginning
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:16 DBG] Sleeping for 5000ms before next poll
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:16 ERR] Failed to process shard shardId-000000000000 after 3 attempts
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:16 DBG] Releasing lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:13 ERR] Error processing shard shardId-000000000000. Retry 3/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:13 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:13 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:12 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:12 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:12 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:12 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:10 ERR] Error processing shard shardId-000000000000. Retry 2/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:10 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:10 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:10 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:10 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 ERR] Error processing shard shardId-000000000000. Retry 1/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 INF] Acquired lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 INF] Starting to process shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Found available shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] No more shards available
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 INF] Retrieved 1 available shards for stream: eventbus_qa_products
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 INF] Found 1 available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Attempting to acquire lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Starting to process available shards
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Getting available shards for stream: eventbus_qa_products, queue ID: 01J96YGCADW51FHK9XNRB7QHVB
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:09 DBG] Describing stream: eventbus_qa_products, starting from shard: beginning
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:04 DBG] Sleeping for 5000ms before next poll
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:04 ERR] Failed to process shard shardId-000000000000 after 3 attempts
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:04 DBG] Releasing lease for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:01 ERR] Error processing shard shardId-000000000000. Retry 3/3
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:01 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:01 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:01 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:03 (UTC+2:00)
+[10:03:01 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:59 ERR] Error processing shard shardId-000000000000. Retry 2/3
+
+October 03, 2024 at 12:02 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:59 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:59 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:59 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:59 DBG] Getting shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:58 ERR] Error processing shard shardId-000000000000. Retry 1/3
+
+October 03, 2024 at 12:02 (UTC+2:00)
+Amazon.Kinesis.Model.ProvisionedThroughputExceededException: Rate exceeded for Shard - 105209180159/eventbus_qa_products/shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+---> Amazon.Runtime.Internal.HttpErrorResponseException: Exception of type 'Amazon.Runtime.Internal.HttpErrorResponseException' was thrown.
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.HttpWebRequestMessage.GetResponseAsync(CancellationToken cancellationToken)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpHandler`1.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.Unmarshaller.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+--- End of inner exception stack trace ---
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionStream(IRequestContext requestContext, IWebResponseData httpErrorResponse, HttpErrorResponseException exception, Stream responseStream)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.HttpErrorResponseExceptionHandler.HandleExceptionAsync(IExecutionContext executionContext, HttpErrorResponseException exception)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ExceptionHandler`1.HandleAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.ProcessExceptionAsync(IExecutionContext executionContext, Exception exception)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.Signer.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.EndpointDiscoveryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CredentialsRetriever.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.RetryHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.CallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.ErrorCallbackHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+at Amazon.Runtime.Internal.MetricsHandler.InvokeAsync[T](IExecutionContext executionContext)
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:58 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:58 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:58 DBG] No records retrieved for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:58 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:57 DBG] Successfully retrieved shard iterator for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:57 DBG] Fetching records for shard: shardId-000000000000
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:57 DBG] Using checkpoint to start reading from sequence number: 49656129165193205814550601252208336131599864792359108610
+
+October 03, 2024 at 12:02 (UTC+2:00)
+[10:02:57 INF] Acquired lease for shard: shardId-000000000000
