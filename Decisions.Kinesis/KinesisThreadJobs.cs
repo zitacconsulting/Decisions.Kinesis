@@ -68,29 +68,35 @@ namespace Decisions.KinesisMessageQueue
 
                 foreach (var shard in shards)
                 {
-                    log.Debug($"Attempting to acquire lease for shard: {shard.ShardId}");
-                    if (KinesisCheckpointer.AcquireLease(StreamName, queueDefinition.Id, shard.ShardId, threadId))
+                    if (!isShuttingDown)
                     {
-                        log.Info($"Acquired lease for shard: {shard.ShardId}");
-                        try
+                        log.Debug($"Attempting to acquire lease for shard: {shard.ShardId}");
+                        if (KinesisCheckpointer.AcquireLease(StreamName, queueDefinition.Id, shard.ShardId, threadId))
                         {
-                            // Process the shard if we successfully acquired the lease
-                            ProcessShard(shard.ShardId);
+                            log.Info($"Acquired lease for shard: {shard.ShardId}");
+                            try
+                            {
+                                // Process the shard if we successfully acquired the lease
+                                ProcessShard(shard.ShardId);
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error(ex, $"Error processing shard {shard.ShardId}");
+                            }
+                            finally
+                            {
+                                // Always release the lease when we're done, even if an error occurred
+                                log.Debug($"Releasing lease for shard: {shard.ShardId}");
+                                KinesisCheckpointer.ReleaseLease(StreamName, queueDefinition.Id, shard.ShardId, threadId);
+                            }
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            log.Error(ex, $"Error processing shard {shard.ShardId}");
-                        }
-                        finally
-                        {
-                            // Always release the lease when we're done, even if an error occurred
-                            log.Debug($"Releasing lease for shard: {shard.ShardId}");
-                            KinesisCheckpointer.ReleaseLease(StreamName, queueDefinition.Id, shard.ShardId, threadId);
+                            log.Debug($"Failed to acquire lease for shard: {shard.ShardId}");
                         }
                     }
-                    else
-                    {
-                        log.Debug($"Failed to acquire lease for shard: {shard.ShardId}");
+                    else {
+                        break;
                     }
                 }
             }
@@ -121,10 +127,10 @@ namespace Decisions.KinesisMessageQueue
                 return;
             }
 
-            while (shardIterator != null)
+            while (shardIterator != null && !isShuttingDown)
             {
                 retryCount = 0;
-                while (retryCount < queueDefinition.MaxRetries)
+                while (retryCount < queueDefinition.MaxRetries && !isShuttingDown)
                 {
                     string lastProcessedSequenceNumber = null;
                     GetRecordsResponse getRecordsResponse = null;
