@@ -350,10 +350,5 @@ namespace Decisions.KinesisMessageQueue
             }
         }
 
-        ~KinesisThreadJob()
-        {
-            log.Debug("KinesisThreadJob finalized");
-            GC.SuppressFinalize(this);
-        }
     }
 }
