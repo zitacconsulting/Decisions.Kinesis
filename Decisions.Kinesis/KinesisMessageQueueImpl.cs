@@ -15,7 +15,7 @@ namespace Decisions.KinesisMessageQueue
 {
     public class KinesisMessageQueueImpl : SimpleMessageQueueImpl<KinesisMessageQueue>
     {
-        private static readonly Log Log = new Log("KinesisQueueImpl");
+        private static readonly Log Log = new Log("Kinesis");
 
         protected override IMqThreadManager CreateThreadManager()
             => new BaseMqThreadManager<KinesisThreadJob, KinesisMessageQueue>("Kinesis", QueueDefinition);

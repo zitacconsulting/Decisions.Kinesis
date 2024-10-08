@@ -58,7 +58,7 @@ namespace Decisions.KinesisMessageQueue
         public override string EntityName
         {
             get { return $"{StreamName}-{ShardId}"; }
-            set {}
+            set { }
         }
 
         [PropertyHidden]
@@ -66,17 +66,14 @@ namespace Decisions.KinesisMessageQueue
         public override string EntityDescription
         {
             get { return $"Checkpoint for Stream: {StreamName}, Shard: {ShardId}"; }
-            set {}
+            set { }
         }
 
-        public KinesisCheckpoint()
-        {
-            Id = IDUtility.GetNewIdString();
-        }
+        public KinesisCheckpoint() { }
 
         public KinesisCheckpoint(string streamName, string queueId, string shardId, string sequenceNumber)
         {
-            Id = IDUtility.GetNewIdString();
+            Id = $"{streamName}_{queueId}_{shardId}";
             StreamName = streamName;
             QueueId = queueId;
             ShardId = shardId;

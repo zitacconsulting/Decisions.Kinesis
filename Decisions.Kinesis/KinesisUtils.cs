@@ -18,7 +18,7 @@ namespace Decisions.KinesisMessageQueue
 {
     public static class KinesisUtils
     {
-        private static readonly Log Log = new Log("KinesisUtils");
+        private static readonly Log Log = new Log("Kinesis");
 
         internal static KinesisSettings GetSettings(string projectId)
         {
@@ -43,73 +43,6 @@ namespace Decisions.KinesisMessageQueue
             }
         }
 
-
-        public static List<Shard> GetAvailableShards(AmazonKinesisClient client, string queueId, string streamName)
-        {
-            Log.Debug($"Getting available shards for stream: {streamName}, queue ID: {queueId}");
-            List<Shard> availableShards = new List<Shard>();
-            string exclusiveStartShardId = null;
-            bool hasMoreShards = true;
-
-            try
-            {
-                // Continue fetching shards until we've retrieved all of them
-                while (hasMoreShards)
-                {
-                    var request = new DescribeStreamRequest
-                    {
-                        StreamName = streamName,
-                        ExclusiveStartShardId = exclusiveStartShardId
-                    };
-
-                    Log.Debug($"Describing stream: {streamName}, starting from shard: {exclusiveStartShardId ?? "beginning"}");
-                    var response = Task.Run(() => client.DescribeStreamAsync(request)).Result;
-
-                    foreach (var shard in response.StreamDescription.Shards)
-                    {
-                        // Only add shards that are not currently leased
-                        if (!KinesisCheckpointer.IsShardLeased(streamName, queueId, shard.ShardId))
-                        {
-                            Log.Debug($"Found available shard: {shard.ShardId}");
-                            availableShards.Add(shard);
-                        }
-                    }
-
-                    // Check if there are more shards to retrieve
-                    if (response.StreamDescription.HasMoreShards)
-                    {
-                        exclusiveStartShardId = response.StreamDescription.Shards.Last().ShardId;
-                        Log.Debug($"More shards available, continuing from shard: {exclusiveStartShardId}");
-                    }
-                    else
-                    {
-                        hasMoreShards = false;
-                        Log.Debug("No more shards available");
-                    }
-                }
-
-                Log.Info($"Retrieved {availableShards.Count} available shards for stream: {streamName}");
-                return availableShards;
-            }
-            catch (AmazonSecurityTokenServiceException stse)
-            {
-                string errorMessage = "Failed to authenticate with AWS. Please check your credentials and permissions.";
-                Log.Error(stse, $"{errorMessage} Details: {stse.Message}");
-                throw new Exception(errorMessage, stse);
-            }
-            catch (AmazonKinesisException ake)
-            {
-                string errorMessage = $"Error accessing Kinesis stream '{streamName}'. Please check if the stream exists and you have the necessary permissions.";
-                Log.Error(ake, $"{errorMessage} Details: {ake.Message}");
-                throw new Exception(errorMessage, ake);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = $"An unexpected error occurred while retrieving shards for stream '{streamName}'.";
-                Log.Error(ex, $"{errorMessage} Details: {ex.Message}");
-                throw new Exception(errorMessage, ex);
-            }
-        }
 
 
         /// Creates and configures an AmazonKinesisClient for a given queue definition.
@@ -269,23 +202,8 @@ namespace Decisions.KinesisMessageQueue
             {
                 List<DataPair> data = new List<DataPair>
                 {
-                    new DataPair("PartitionKey", record.PartitionKey),
-                    new DataPair("SequenceNumber", record.SequenceNumber),
-                    new DataPair("ApproximateArrivalTimestamp", record.ApproximateArrivalTimestamp.ToString("o")),
                     new DataPair("EncryptionType", record.EncryptionType?.Value ?? "None")
                 };
-
-                // Convert the record's data to a string if it exists
-                if (record.Data != null && record.Data.Length > 0)
-                {
-                    string dataAsString = Encoding.UTF8.GetString(record.Data.ToArray());
-                    data.Add(new DataPair("Data", dataAsString));
-                    Log.Debug($"Record data length: {dataAsString.Length} characters");
-                }
-                else
-                {
-                    Log.Debug("Record data is null or empty");
-                }
 
                 return data;
             }

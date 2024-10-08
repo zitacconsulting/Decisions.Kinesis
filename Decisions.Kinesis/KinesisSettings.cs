@@ -11,7 +11,7 @@ namespace Decisions.KinesisMessageQueue
 {
     public class KinesisSettings : BaseMqSettings<KinesisMessageQueue>
     {
-        public override string LogCategory => "Kinesis Settings";
+        public override string LogCategory => "Kinesis";
         protected override string AddQueueActionText => "Add Kinesis Stream";
         protected override string QueueTypeName => "Kinesis";
         public override string ModuleName => "Decisions.Kinesis";
