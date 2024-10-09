@@ -19,13 +19,13 @@ namespace Decisions.KinesisMessageQueue
         {
             Log.Debug($"Attempting to acquire lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}");
             var orm = new ORM<KinesisCheckpoint>();
-            
+
             try
             {
                 string checkpointId = GetCheckpointId(streamName, queueId, shardId);
 
                 var existingCheckpoint = orm.Fetch(new WhereCondition[] {
-                    new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
+                new FieldWhereCondition("id", QueryMatchType.Equals, checkpointId)
                 }).FirstOrDefault();
 
                 if (existingCheckpoint == null)
@@ -36,21 +36,27 @@ namespace Decisions.KinesisMessageQueue
                         LeaseOwner = threadId,
                         LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration)
                     };
-                    
-                    orm.Store(newCheckpoint);
-                    Log.Info($"Acquired new lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}");
+                    // Force Insert Statement to leverage the unique ID constraint to prevent duplicate leases
+                    orm.Store(newCheckpoint, true);
+                    Log.Info($"Acquired new lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}, LeaseID: {newCheckpoint.Id}");
                     return true;
                 }
                 else if (existingCheckpoint.LeaseExpirationTime < DateTime.UtcNow)
                 {
                     // Existing checkpoint with expired lease, try to acquire it
-                    existingCheckpoint.LeaseOwner = threadId;
-                    existingCheckpoint.LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration);
-                    orm.Store(existingCheckpoint, false, true, "LeaseOwner", "LeaseExpirationTime");
-                    
+                    // Delete and recreate the lease to leverage unique id constraint to prevent duplicate updates.
+                    orm.Delete(existingCheckpoint, true);
+                    var newCheckpoint = new KinesisCheckpoint(streamName, queueId, shardId, existingCheckpoint.SequenceNumber)
+                    {
+                        LeaseOwner = threadId,
+                        LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration)
+                    };
+                    // Force Insert Statement to leverage the unique ID constraint to prevent duplicate leases
+                    orm.Store(newCheckpoint, true);
 
-                        Log.Info($"Acquired expired lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}");
-                        return true;
+
+                    Log.Info($"Acquired expired lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}");
+                    return true;
 
                 }
 
@@ -73,7 +79,7 @@ namespace Decisions.KinesisMessageQueue
                 string checkpointId = GetCheckpointId(streamName, queueId, shardId);
 
                 var checkpoint = orm.Fetch(new WhereCondition[] {
-                    new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
+                    new FieldWhereCondition("id", QueryMatchType.Equals, checkpointId)
                 }).FirstOrDefault();
 
                 if (checkpoint == null)
@@ -86,7 +92,8 @@ namespace Decisions.KinesisMessageQueue
                 {
                     checkpoint.SequenceNumber = sequenceNumber;
                     checkpoint.LastProcessedTimestamp = DateTime.UtcNow;
-                    orm.Store(checkpoint, false, false, "sequence_number", "last_processed_timestamp");
+                    checkpoint.LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration);
+                    orm.Store(checkpoint, false, false, "sequence_number", "last_processed_timestamp", "lease_expiration_time");
                     Log.Info($"Updated existing checkpoint for stream: {streamName}, queue: {queueId}, shard: {shardId}");
                 }
             }
@@ -106,7 +113,7 @@ namespace Decisions.KinesisMessageQueue
                 string checkpointId = GetCheckpointId(streamName, queueId, shardId);
 
                 var checkpoint = orm.Fetch(new WhereCondition[] {
-new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
+                new FieldWhereCondition("id", QueryMatchType.Equals, checkpointId)
                 }).FirstOrDefault();
 
                 if (checkpoint != null)
@@ -136,8 +143,8 @@ new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
                 string checkpointId = GetCheckpointId(streamName, queueId, shardId);
 
                 var checkpoint = orm.Fetch(new WhereCondition[] {
-                    new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId),
-                    new FieldWhereCondition("LeaseOwner", QueryMatchType.Equals, threadId)
+                    new FieldWhereCondition("id", QueryMatchType.Equals, checkpointId),
+                    new FieldWhereCondition("lease_owner", QueryMatchType.Equals, threadId)
                 }).FirstOrDefault();
 
                 if (checkpoint != null)
@@ -170,7 +177,7 @@ new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
                     new FieldWhereCondition("queue_id", QueryMatchType.Equals, queueId),
                     new FieldWhereCondition("lease_owner", QueryMatchType.Equals, threadId)
                 });
-                
+
                 foreach (var checkpoint in checkpoints)
                 {
                     checkpoint.LeaseOwner = null;
@@ -188,33 +195,5 @@ new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
             }
         }
 
-        public static bool IsShardLeased(string streamName, string queueId, string shardId)
-        {
-            Log.Debug($"Checking if shard is leased for stream: {streamName}, queue: {queueId}, shard: {shardId}");
-            try
-            {
-                var orm = new ORM<KinesisCheckpoint>();
-                string checkpointId = GetCheckpointId(streamName, queueId, shardId);
-
-                var checkpoint = orm.Fetch(new WhereCondition[] {
-                    new FieldWhereCondition("Id", QueryMatchType.Equals, checkpointId)
-                }).FirstOrDefault();
-
-                if (checkpoint == null)
-                {
-                    Log.Info($"No lease found for stream: {streamName}, queue: {queueId}, shard: {shardId}");
-                    return false;
-                }
-
-                bool isLeased = !string.IsNullOrEmpty(checkpoint.LeaseOwner) && checkpoint.LeaseExpirationTime > DateTime.UtcNow;
-                Log.Info($"Shard lease status for stream: {streamName}, queue: {queueId}, shard: {shardId} - IsLeased: {isLeased}");
-                return isLeased;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"Error checking shard lease for stream: {streamName}, queue: {queueId}, shard: {shardId}");
-                throw new InvalidOperationException($"Failed to check shard lease: {ex.Message}", ex);
-            }
-        }
     }
 }
