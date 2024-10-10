@@ -11,6 +11,7 @@ using DecisionsFramework.Design.Flow.Mapping;
 using DecisionsFramework.ServiceLayer.Services.ContextData;
 using DecisionsFramework.ServiceLayer.Utilities;
 using Decisions.MessageQueues;
+using Newtonsoft.Json.Linq;
 
 namespace Decisions.KinesisMessageQueue
 {
@@ -252,20 +253,33 @@ namespace Decisions.KinesisMessageQueue
         }
         private TimeSpan GetBackoffTime(int retryCount)
         {
-            // Exponential backoff with a max of 30 seconds
-            int backoffSeconds = Math.Min((int)Math.Pow(2, retryCount), 30);
-
-            // Add jitter
-            Random random = new Random();
-            int jitterSeconds = random.Next(0, 1000) / 1000;  // Random milliseconds
-
-            return TimeSpan.FromSeconds(backoffSeconds + jitterSeconds);
+            var backoffSeconds = queueDefinition.ErrorBackoffTime * retryCount;
+            return TimeSpan.FromSeconds(backoffSeconds);
         }
         private void ProcessRecord(Record record)
         {
             string messageId = record.SequenceNumber;
             byte[] messageBody = record.Data.ToArray();
             string messageText = System.Text.Encoding.UTF8.GetString(messageBody);
+
+            // Apply payload filters
+            if (queueDefinition.PayloadFilters != null && queueDefinition.PayloadFilters.Length > 0)
+            {
+                try
+                {
+                    JObject jsonPayload = JObject.Parse(messageText);
+                    if (!ApplyPayloadFilters(jsonPayload, queueDefinition.PayloadFilters))
+                    {
+                        log.Debug($"Record {messageId} filtered out based on payload filters");
+                        return; // Skip this record if it doesn't match the filters
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex, $"Error parsing JSON payload for record {messageId}. Skipping filter application.");
+                }
+            }
+
 
             var metadata = KinesisUtils.GetRecordMetadata(record);
             var recordData = KinesisUtils.GetRecordData(record);
@@ -277,6 +291,89 @@ namespace Decisions.KinesisMessageQueue
                 throw new Exception($"Failed to process message: {messageId}");
             }
             log.Debug($"Successfully processed record: {record.SequenceNumber}");
+        }
+
+         private bool ApplyPayloadFilters(JObject payload, KinesisPayloadFilter.PayloadFilter[] filters)
+        {
+            foreach (var filter in filters)
+            {
+                JToken value = payload.SelectToken(filter.Property);
+                if (value == null)
+                {
+                    return false; // Property not found, filter fails
+                }
+
+                string stringValue = value.ToString();
+                bool matches = false;
+
+                switch (filter.Verb)
+                {
+                    case "Equals":
+                        matches = stringValue == filter.Value;
+                        break;
+                    case "Equals (Case Insensitive)":
+                        matches = string.Equals(stringValue, filter.Value, StringComparison.OrdinalIgnoreCase);
+                        break;
+                    case "Not Equals":
+                        matches = stringValue != filter.Value;
+                        break;
+                    case "Not Equals (Case Insensitive)":
+                        matches = !string.Equals(stringValue, filter.Value, StringComparison.OrdinalIgnoreCase);
+                        break;
+                    case "Contains":
+                        matches = stringValue.Contains(filter.Value);
+                        break;
+                    case "Contains (Case Insensitive)":
+                        matches = stringValue.IndexOf(filter.Value, StringComparison.OrdinalIgnoreCase) >= 0;
+                        break;
+                    case "Starts With":
+                        matches = stringValue.StartsWith(filter.Value);
+                        break;
+                    case "Starts With (Case Insensitive)":
+                        matches = stringValue.StartsWith(filter.Value, StringComparison.OrdinalIgnoreCase);
+                        break;
+                    case "Ends With":
+                        matches = stringValue.EndsWith(filter.Value);
+                        break;
+                    case "Ends With (Case Insensitive)":
+                        matches = stringValue.EndsWith(filter.Value, StringComparison.OrdinalIgnoreCase);
+                        break;
+                    case "Greater Than":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.Ordinal) > 0;
+                        break;
+                    case "Greater Than (Case Insensitive)":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.OrdinalIgnoreCase) > 0;
+                        break;
+                    case "Less Than":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.Ordinal) < 0;
+                        break;
+                    case "Less Than (Case Insensitive)":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.OrdinalIgnoreCase) < 0;
+                        break;
+                    case "Greater Than or Equal":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.Ordinal) >= 0;
+                        break;
+                    case "Greater Than or Equal (Case Insensitive)":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.OrdinalIgnoreCase) >= 0;
+                        break;
+                    case "Less Than or Equal":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.Ordinal) <= 0;
+                        break;
+                    case "Less Than or Equal (Case Insensitive)":
+                        matches = string.Compare(stringValue, filter.Value, StringComparison.OrdinalIgnoreCase) <= 0;
+                        break;
+                    default:
+                        log.Warn($"Unknown filter verb: {filter.Verb}");
+                        return false;
+                }
+
+                if (!matches)
+                {
+                    return false; // If any filter doesn't match, return false
+                }
+            }
+
+            return true; // All filters matched
         }
 
         private void HandleUnprocessableRecord(Record record, Exception ex)

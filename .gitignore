@@ -8,3 +8,5 @@ Decisions.MessageQueues.zip
 Decisions.AWS/*
 Decisions.Kinesis/bin/*
 Decisions.Kinesis/obj/*
+Newtonsoft.Json.dll
+Decisions.MessageQueues

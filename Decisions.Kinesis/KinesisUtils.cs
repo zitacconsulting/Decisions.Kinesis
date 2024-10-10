@@ -127,17 +127,13 @@ namespace Decisions.KinesisMessageQueue
 
             switch (environment)
             {
-                case "ECS":
-                    Log.Debug("Using ECS Task Credentials for role assumption.");
-                    return new AssumeRoleAWSCredentials(new ECSTaskCredentials(), roleArn, "DecisionsKinesisSession");
+                case "Container":
+                    Log.Debug("Using GenericContainerCredentials for role assumption in container environment (ECS or EKS).");
+                    return new AssumeRoleAWSCredentials(new GenericContainerCredentials(), roleArn, "DecisionsKinesisSession");
 
                 case "EC2":
                     Log.Debug("Using EC2 Instance Profile Credentials for role assumption.");
                     return new AssumeRoleAWSCredentials(new InstanceProfileAWSCredentials(), roleArn, "DecisionsKinesisSession");
-
-                case "Container":
-                    Log.Debug("Running in a non-ECS container. Using environment variables for credentials.");
-                    return new AssumeRoleAWSCredentials(new EnvironmentVariablesAWSCredentials(), roleArn, "DecisionsKinesisSession");
 
                 case "WindowsServer":
                     Log.Debug("Running on Windows Server. Using AWS SDK's default credential search order.");
@@ -151,22 +147,17 @@ namespace Decisions.KinesisMessageQueue
 
         private static string DetectEnvironment()
         {
-            // Check for ECS (container environment)
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI")))
+            // Check for container environment (ECS or EKS)
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI")) ||
+                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("KUBERNETES_SERVICE_HOST")))
             {
-                return "ECS";
+                return "Container";
             }
 
-            // Check for EC2 (could be container or Windows server)
+            // Check for EC2
             if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("EC2_INSTANCE_ID")))
             {
                 return "EC2";
-            }
-
-            // Check if running in a container
-            if (File.Exists("/.dockerenv"))
-            {
-                return "Container";
             }
 
             // If none of the above, assume it's a Windows server

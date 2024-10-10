@@ -17,8 +17,11 @@
 		<Reference Include="Amazon.SecurityToken">
 			<HintPath>..\AWSSDK.SecurityToken.dll</HintPath>
 		</Reference>
-    <Reference Include="Amazon">
+        <Reference Include="Amazon">
 			<HintPath>..\AWSSDK.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>..\Newtonsoft.Json.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 </Project>

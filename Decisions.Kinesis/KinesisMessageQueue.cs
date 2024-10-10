@@ -2,6 +2,7 @@ using DecisionsFramework;
 using DecisionsFramework.Data.ORMapper;
 using DecisionsFramework.Data.Messaging;
 using DecisionsFramework.Design.ConfigurationStorage.Attributes;
+using DecisionsFramework.Design.ConfigurationStorage;
 using DecisionsFramework.Design.Properties;
 using DecisionsFramework.Design.Properties.Attributes;
 using DecisionsFramework.ServiceLayer.Utilities;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Decisions.MessageQueues;
 
+
 namespace Decisions.KinesisMessageQueue
 {
     public class KinesisMessageQueue : BaseMqDefinition
@@ -17,6 +19,8 @@ namespace Decisions.KinesisMessageQueue
         public override string LogCategory => "Kinesis";
         protected override IMessageQueue CreateNewQueueImpl() => new KinesisMessageQueueImpl(this);
         protected override BaseMqClusterNotification CreateNewClusterNotification() => new KinesisClusterNotification();
+
+        private ORMOneToManyRelationship<KinesisPayloadFilter.PayloadFilter> payloadFilters;
 
         [ORMField]
         [WritableValue]
@@ -61,6 +65,13 @@ namespace Decisions.KinesisMessageQueue
             }
         }
 
+        [DataMember]
+        [PropertyClassification(4, "JSON Payload Filters", "1 Definition")]
+        public KinesisPayloadFilter.PayloadFilter[] PayloadFilters
+        {
+            get { return payloadFilters.Items; }
+            set { payloadFilters.Items = value; }
+        }
 
         [ORMField]
         [WritableValue]
@@ -148,6 +159,22 @@ namespace Decisions.KinesisMessageQueue
             set
             {
                 shardBatchWaitTime = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        private int errorBackoffTime = 5;
+
+        [DataMember]
+        [PropertyClassification(17, "Error Backoff Time (seconds)", "2 Advanced")]
+        public int ErrorBackoffTime
+        {
+            get { return errorBackoffTime; }
+            set
+            {
+                errorBackoffTime = value;
                 OnPropertyChanged();
             }
         }
@@ -280,6 +307,31 @@ namespace Decisions.KinesisMessageQueue
             }
         }
 
+        public override void Read(ReadStream stream)
+        {
+            base.Read(stream);
+            if (stream.ContainsValue("filters_Count"))
+            {
+                List<KinesisPayloadFilter.PayloadFilter> filterList = new List<KinesisPayloadFilter.PayloadFilter>();
+                for (int index = 0; index < stream.GetValue<int>("filters_Count"); ++index)
+                {
+                    if (stream.ContainsValue($"filters_{index + 1}") && stream.GetValue<byte[]>($"filters_{index + 1}") != null)
+                        filterList.Add(ObjectGraphSerializer.Deserialize(stream.GetValue<byte[]>($"filters_{index + 1}"), DataGraph.ReferenceUpdatePolicy.Inherit) as KinesisPayloadFilter.PayloadFilter);
+                }
+                this.payloadFilters.Items = filterList.ToArray();
+            }
+        }
+
+        public override void Save(WriteStream stream)
+        {
+            base.Save(stream);
+            if (this.payloadFilters != null && this.payloadFilters.Items.Any())
+            {
+                stream.Add("filters_Count", this.payloadFilters.Items.Length);
+                for (int index = 0; index < this.payloadFilters.Items.Length; ++index)
+                    stream.Add($"filters_{index + 1}", ObjectGraphSerializer.Serialize(this.payloadFilters.Items[index]));
+            }
+        }
         public override ValidationIssue[] GetAdditionalValidationIssues()
         {
             List<ValidationIssue> issues = new List<ValidationIssue>();
@@ -313,8 +365,25 @@ namespace Decisions.KinesisMessageQueue
                 if (AuthenticationMethod == "StaticCredentials" && (string.IsNullOrEmpty(AccessKeyId) || string.IsNullOrEmpty(SecretAccessKey)))
                     issues.Add(new ValidationIssue(this, "Access Key ID and Secret Access Key must be supplied when using Static Credentials", "", BreakLevel.Fatal));
             }
-
+            if (PayloadFilters != null)
+            {
+                foreach (var filter in PayloadFilters)
+                {
+                    if (string.IsNullOrEmpty(filter.Property))
+                        issues.Add(new ValidationIssue(this, "Filter property cannot be empty", "", BreakLevel.Fatal));
+                    if (string.IsNullOrEmpty(filter.Verb))
+                        issues.Add(new ValidationIssue(this, "Filter verb cannot be empty", "", BreakLevel.Fatal));
+                    if (string.IsNullOrEmpty(filter.Value))
+                        issues.Add(new ValidationIssue(this, "Filter value cannot be empty", "", BreakLevel.Fatal));
+                }
+            }
             return issues.ToArray();
+        }
+        public KinesisMessageQueue()
+        {
+            ORMOneToManyRelationship<KinesisPayloadFilter.PayloadFilter> filterRelationship = new ORMOneToManyRelationship<KinesisPayloadFilter.PayloadFilter>("kinesis_message_queue_id", false);
+            filterRelationship.DeleteOrphans = true;
+            this.payloadFilters = filterRelationship;
         }
     }
 }
