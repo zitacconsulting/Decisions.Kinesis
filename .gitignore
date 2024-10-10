@@ -9,4 +9,4 @@ Decisions.AWS/*
 Decisions.Kinesis/bin/*
 Decisions.Kinesis/obj/*
 Newtonsoft.Json.dll
-Decisions.MessageQueues
+Decisions.MessageQueues/*
