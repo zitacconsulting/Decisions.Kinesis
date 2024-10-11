@@ -49,7 +49,8 @@ namespace Decisions.KinesisMessageQueue
                     var newCheckpoint = new KinesisCheckpoint(streamName, queueId, shardId, existingCheckpoint.SequenceNumber)
                     {
                         LeaseOwner = threadId,
-                        LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration)
+                        LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration),
+                        LastProcessedTimestamp = existingCheckpoint.LastProcessedTimestamp
                     };
                     // Force Insert Statement to leverage the unique ID constraint to prevent duplicate leases
                     orm.Store(newCheckpoint, true);
