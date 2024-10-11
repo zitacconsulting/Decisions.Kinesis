@@ -185,7 +185,7 @@ namespace Decisions.KinesisMessageQueue
         private bool overrideSettings;
 
         [DataMember]
-        [PropertyClassification(2, "Override Default Settings", "3 Connection")]
+        [PropertyClassification(1, "Override Default Settings", "3 Connection")]
         public bool OverrideSettings
         {
             get { return overrideSettings; }
@@ -201,7 +201,7 @@ namespace Decisions.KinesisMessageQueue
         private string region;
 
         [DataMember]
-        [PropertyClassification(3, "AWS Region", "3 Connection")]
+        [PropertyClassification(2, "AWS Region", "3 Connection")]
         [SelectStringEditor("RegionOptions")]
         [BooleanPropertyHidden(nameof(OverrideSettings), false)]
         public string Region
@@ -219,7 +219,7 @@ namespace Decisions.KinesisMessageQueue
         private string authenticationMethod;
 
         [DataMember]
-        [PropertyClassification(4, "Authentication Method", "3 Connection")]
+        [PropertyClassification(3, "Authentication Method", "3 Connection")]
         [SelectStringEditor("AuthenticationMethods")]
         [BooleanPropertyHidden(nameof(OverrideSettings), false)]
         public string AuthenticationMethod
@@ -233,37 +233,42 @@ namespace Decisions.KinesisMessageQueue
         }
 
         [ORMField]
+        [PropertyClassification(4, "Access Key ID", "3 Connection")]
         [WritableValue]
-        [DataMember]
-        [PropertyClassification(5, "Role ARN", "3 Connection")]
-        [PropertyHiddenByValue(nameof(AuthenticationMethod), "RoleARN", false)]
-        [BooleanPropertyHidden(nameof(OverrideSettings), false)]
-        public string RoleArn { get; set; }
-
-        [ORMField]
-        [WritableValue]
-        [DataMember]
-        [PropertyClassification(6, "Access Key ID", "3 Connection")]
         [PropertyHiddenByValue(nameof(AuthenticationMethod), "StaticCredentials", false)]
-        [BooleanPropertyHidden(nameof(OverrideSettings), false)]
         public string AccessKeyId { get; set; }
 
         [ORMField(4000, typeof(FixedLengthStringFieldConverter))]
-        [WritableValue]
-        [DataMember]
-        [PropertyClassification(7, "Secret Access Key", "3 Connection")]
+        [PropertyClassification(5, "Secret Access Key", "3 Connection")]
         [PasswordText]
+        [WritableValue]
         [PropertyHiddenByValue(nameof(AuthenticationMethod), "StaticCredentials", false)]
-        [BooleanPropertyHidden(nameof(OverrideSettings), false)]
         public string SecretAccessKey { get; set; }
 
         [ORMField]
         [WritableValue]
+        private bool useRoleArn;
+
         [DataMember]
-        [PropertyClassification(8, "Session Token", "3 Connection")]
-        [PropertyHiddenByValue(nameof(AuthenticationMethod), "StaticCredentials", false)]
+        [PropertyClassification(5, "Assume Role", "3 Connection")]
         [BooleanPropertyHidden(nameof(OverrideSettings), false)]
-        public string SessionToken { get; set; }
+        public bool UseRoleArn
+        {
+            get { return useRoleArn; }
+            set
+            {
+                useRoleArn = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        [DataMember]
+        [PropertyClassification(7, "Role ARN", "3 Connection")]
+        [BooleanPropertyHidden(nameof(OverrideSettings), false)]
+        [BooleanPropertyHidden(nameof(UseRoleArn), false)]
+        public string RoleArn { get; set; }
 
         [PropertyHidden]
         public string[] InitialStreamPositionOptions
@@ -301,8 +306,7 @@ namespace Decisions.KinesisMessageQueue
                 return new string[]
                 {
                     "DefaultCredentials",
-                    "StaticCredentials",
-                    "RoleARN"
+                    "StaticCredentials"
                 };
             }
         }
@@ -359,7 +363,7 @@ namespace Decisions.KinesisMessageQueue
                 if (string.IsNullOrEmpty(AuthenticationMethod))
                     issues.Add(new ValidationIssue(this, "Authentication method must be selected if settings are overridden", "", BreakLevel.Fatal));
 
-                if (AuthenticationMethod == "RoleARN" && string.IsNullOrEmpty(RoleArn))
+                if (UseRoleArn && string.IsNullOrEmpty(RoleArn))
                     issues.Add(new ValidationIssue(this, "Role ARN must be supplied when using Role ARN authentication", "", BreakLevel.Fatal));
 
                 if (AuthenticationMethod == "StaticCredentials" && (string.IsNullOrEmpty(AccessKeyId) || string.IsNullOrEmpty(SecretAccessKey)))

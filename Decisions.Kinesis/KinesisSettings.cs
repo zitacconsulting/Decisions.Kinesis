@@ -40,30 +40,50 @@ namespace Decisions.KinesisMessageQueue
         public string AuthenticationMethod
         {
             get { return authenticationMethod; }
-            set { 
+            set
+            {
                 authenticationMethod = value;
                 OnPropertyChanged();
-             }
+            }
         }
 
         [ORMField]
-        [PropertyClassification(3, "Role ARN", "Settings")]
-        [WritableValue]
-        [PropertyHiddenByValue(nameof(AuthenticationMethod), "RoleARN", false)]
-        public string RoleArn { get; set; }
-
-        [ORMField]
-        [PropertyClassification(4, "Access Key ID", "Settings")]
+        [PropertyClassification(3, "Access Key ID", "Settings")]
         [WritableValue]
         [PropertyHiddenByValue(nameof(AuthenticationMethod), "StaticCredentials", false)]
         public string AccessKeyId { get; set; }
 
         [ORMField(4000, typeof(FixedLengthStringFieldConverter))]
-        [PropertyClassification(5, "Secret Access Key", "Settings")]
+        [PropertyClassification(4, "Secret Access Key", "Settings")]
         [PasswordText]
         [WritableValue]
         [PropertyHiddenByValue(nameof(AuthenticationMethod), "StaticCredentials", false)]
         public string SecretAccessKey { get; set; }
+
+        [ORMField]
+        [WritableValue]
+        private bool useRoleArn;
+
+        [DataMember]
+        [PropertyClassification(4, "Assume Role", "Settings")]
+        public bool UseRoleArn
+        {
+            get { return useRoleArn; }
+            set
+            {
+                useRoleArn = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        [DataMember]
+        [PropertyClassification(5, "Role ARN", "Settings")]
+        [BooleanPropertyHidden(nameof(UseRoleArn), false)]
+        public string RoleArn { get; set; }
+
+
 
 
         [PropertyHidden]
@@ -89,10 +109,10 @@ namespace Decisions.KinesisMessageQueue
                 return new string[]
                 {
                     "DefaultCredentials",
-                    "StaticCredentials",
-                    "RoleARN"
+                    "StaticCredentials"
                 };
             }
         }
+        
     }
 }

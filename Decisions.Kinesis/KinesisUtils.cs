@@ -90,80 +90,57 @@ namespace Decisions.KinesisMessageQueue
         private static AWSCredentials GetCredentials(KinesisMessageQueue queueDefinition, KinesisSettings settings)
         {
             string authMethod = queueDefinition.OverrideSettings ? queueDefinition.AuthenticationMethod : settings.AuthenticationMethod;
+            bool useRoleArn = queueDefinition.OverrideSettings ? queueDefinition.UseRoleArn : settings.UseRoleArn;
             Log.Debug($"Getting credentials using authentication method: {authMethod}");
 
             try
             {
+                AWSCredentials baseCredentials;
+
                 switch (authMethod)
                 {
                     case "DefaultCredentials":
-                        Log.Debug("Using DefaultCredentials (InstanceProfileAWSCredentials)");
-                        return new InstanceProfileAWSCredentials();
+                        Log.Info("Using FallbackCredentialsFactory for default credentials");
+                        baseCredentials = FallbackCredentialsFactory.GetCredentials();
+                        break;
+
                     case "StaticCredentials":
-                        Log.Debug("Using StaticCredentials (BasicAWSCredentials)");
+                        Log.Info("Using StaticCredentials for authentication");
                         string accessKeyId = queueDefinition.OverrideSettings ? queueDefinition.AccessKeyId : settings.AccessKeyId;
                         string secretAccessKey = queueDefinition.OverrideSettings ? queueDefinition.SecretAccessKey : settings.SecretAccessKey;
-                        return new BasicAWSCredentials(accessKeyId, secretAccessKey);
-                    case "RoleARN":
-                        return GetEnvironmentAwareRoleCredentials(queueDefinition, settings);
+                        if (string.IsNullOrEmpty(accessKeyId) || string.IsNullOrEmpty(secretAccessKey))
+                        {
+                            throw new ArgumentException("AccessKeyId and SecretAccessKey must be provided for StaticCredentials");
+                        }
+                        baseCredentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
+                        break;
+
                     default:
                         throw new ArgumentException($"Invalid authentication method: {authMethod}");
+                }
+
+                if (useRoleArn)
+                {
+                    Log.Info("Using Role ARN for authentication");
+                    string roleArn = queueDefinition.OverrideSettings ? queueDefinition.RoleArn : settings.RoleArn;
+                    if (string.IsNullOrEmpty(roleArn))
+                    {
+                        throw new ArgumentException("RoleARN must be provided when UseRoleArn is true");
+                    }
+
+                    return new AssumeRoleAWSCredentials(baseCredentials, roleArn, "DecisionsKinesisSession");
+                }
+                else
+                {
+                    return baseCredentials;
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, $"Error occurred while getting AWS credentials with method {authMethod}");
-                throw new Exception($"Failed to get AWS credentials: {ex.Message}", ex);
+                Log.Error(ex, $"Error getting credentials for authentication method: {authMethod}\n{ex.Message}");
+                throw;
             }
         }
-
-
-        private static AWSCredentials GetEnvironmentAwareRoleCredentials(KinesisMessageQueue queueDefinition, KinesisSettings settings)
-        {
-            string environment = DetectEnvironment();
-            string roleArn = queueDefinition.OverrideSettings ? queueDefinition.RoleArn : settings.RoleArn;
-
-            Log.Debug($"Detected environment: {environment}");
-
-            switch (environment)
-            {
-                case "Container":
-                    Log.Debug("Using GenericContainerCredentials for role assumption in container environment (ECS or EKS).");
-                    return new AssumeRoleAWSCredentials(new GenericContainerCredentials(), roleArn, "DecisionsKinesisSession");
-
-                case "EC2":
-                    Log.Debug("Using EC2 Instance Profile Credentials for role assumption.");
-                    return new AssumeRoleAWSCredentials(new InstanceProfileAWSCredentials(), roleArn, "DecisionsKinesisSession");
-
-                case "WindowsServer":
-                    Log.Debug("Running on Windows Server. Using AWS SDK's default credential search order.");
-                    return new AssumeRoleAWSCredentials(FallbackCredentialsFactory.GetCredentials(), roleArn, "DecisionsKinesisSession");
-
-                default:
-                    Log.Warn("Unable to detect specific environment. Falling back to default credential provider chain.");
-                    return new AssumeRoleAWSCredentials(FallbackCredentialsFactory.GetCredentials(), roleArn, "DecisionsKinesisSession");
-            }
-        }
-
-        private static string DetectEnvironment()
-        {
-            // Check for container environment (ECS or EKS)
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ECS_CONTAINER_METADATA_URI")) ||
-                !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("KUBERNETES_SERVICE_HOST")))
-            {
-                return "Container";
-            }
-
-            // Check for EC2
-            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("EC2_INSTANCE_ID")))
-            {
-                return "EC2";
-            }
-
-            // If none of the above, assume it's a Windows server
-            return "WindowsServer";
-        }
-
 
         /// Extracts metadata from a Kinesis record.
         internal static List<DataPair> GetRecordMetadata(Record record)
