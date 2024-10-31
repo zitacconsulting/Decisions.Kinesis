@@ -133,7 +133,7 @@ namespace Decisions.KinesisMessageQueue
 
         [ORMField]
         [WritableValue]
-        private int shardPollInterval = 5;
+        private int shardPollInterval = 30;
 
         [DataMember]
         [PropertyClassification(15, "Shard Poll Interval (seconds)", "2 Advanced")]

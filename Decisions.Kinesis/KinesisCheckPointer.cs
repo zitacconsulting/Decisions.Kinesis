@@ -25,8 +25,8 @@ namespace Decisions.KinesisMessageQueue
                 string checkpointId = GetCheckpointId(streamName, queueId, shardId);
 
                 var existingCheckpoint = orm.Fetch(new WhereCondition[] {
-                new FieldWhereCondition("id", QueryMatchType.Equals, checkpointId)
-                }).FirstOrDefault();
+            new FieldWhereCondition("id", QueryMatchType.Equals, checkpointId)
+        }).FirstOrDefault();
 
                 if (existingCheckpoint == null)
                 {
@@ -41,28 +41,51 @@ namespace Decisions.KinesisMessageQueue
                     Log.Info($"Acquired new lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}, LeaseID: {newCheckpoint.Id}");
                     return true;
                 }
-                else if (existingCheckpoint.LeaseExpirationTime < DateTime.UtcNow)
+
+                // Check if this is our lease or if it's expired
+                if (existingCheckpoint.LeaseExpirationTime >= DateTime.UtcNow)
                 {
-                    // Existing checkpoint with expired lease, try to acquire it
-                    // Delete and recreate the lease to leverage unique id constraint to prevent duplicate updates.
+                    // Lease is still valid
+                    if (existingCheckpoint.LeaseOwner == threadId)
+                    {
+                        // We own this lease, renew it
+                        existingCheckpoint.LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration);
+                        orm.Store(existingCheckpoint, false, false, "lease_expiration_time");
+                        Log.Debug($"Successfully renewed lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}");
+                        return true;
+                    }
+
+                    // Someone else owns this lease and it's still valid
+                    Log.Info($"Lease already held for stream: {streamName}, queue: {queueId}, shard: {shardId}. Current owner: {existingCheckpoint.LeaseOwner}");
+                    return false;
+                }
+
+                // Lease has expired, try to take ownership
+                try
+                {
+                    // Delete and recreate the lease to leverage unique id constraint
+                    // This ensures atomic lease transition and prevents race conditions
                     orm.Delete(existingCheckpoint, true);
+
                     var newCheckpoint = new KinesisCheckpoint(streamName, queueId, shardId, existingCheckpoint.SequenceNumber)
                     {
                         LeaseOwner = threadId,
                         LeaseExpirationTime = DateTime.UtcNow.Add(LeaseDuration),
                         LastProcessedTimestamp = existingCheckpoint.LastProcessedTimestamp
                     };
-                    // Force Insert Statement to leverage the unique ID constraint to prevent duplicate leases
-                    orm.Store(newCheckpoint, true);
 
+                    // Force Insert Statement to leverage the unique ID constraint
+                    orm.Store(newCheckpoint, true);
 
                     Log.Info($"Acquired expired lease for stream: {streamName}, queue: {queueId}, shard: {shardId}, thread: {threadId}");
                     return true;
-
                 }
-
-                Log.Info($"Lease already held for stream: {streamName}, queue: {queueId}, shard: {shardId}. Current owner: {existingCheckpoint.LeaseOwner}");
-                return false;
+                catch (Exception ex) when (ex.Message.Contains("unique constraint"))
+                {
+                    // If we hit a unique constraint violation, someone else acquired the lease first
+                    Log.Debug($"Failed to acquire expired lease - concurrent acquisition detected for shard: {shardId}");
+                    return false;
+                }
             }
             catch (Exception ex)
             {
