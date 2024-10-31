@@ -14,7 +14,7 @@
       "MsSqlScript": null
     },
     "Version": "9.3.0",
-    "ImagePath": "https://github.com/zitacconsulting/Decisions.Kinesis/blob/main/kinesis.png?raw=true",
+    "ImagePath": "./kinesis.png",
     "Dependencies": [{
         "ModuleName": "Decisions.MessageQueues.zip",
         "AutoInstall": true
