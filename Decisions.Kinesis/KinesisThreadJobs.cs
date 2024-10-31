@@ -393,21 +393,24 @@ namespace Decisions.KinesisMessageQueue
                         if (cancellationToken.IsCancellationRequested)
                             break;
 
-                        // Try to save checkpoint - if this fails, another thread may have taken the lease
-                        try
+                        // Use AcquireLease instead of SaveCheckpoint for renewal
+                        // This will only update lease-related fields and preserve the sequence number
+                        if (!KinesisCheckpointer.AcquireLease(StreamName, queueDefinition.Id, shardId, threadId))
                         {
-                            KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, null);
-                            log.Debug($"Successfully renewed lease for shard {shardId}");
-                        }
-                        catch (Exception ex)
-                        {
-                            log.Error(ex, $"Failed to renew lease for shard {shardId}, stopping lease renewal");
+                            log.Error($"Failed to renew lease for shard {shardId}, another thread may have taken ownership");
                             break;
                         }
+
+                        log.Debug($"Successfully renewed lease for shard {shardId}");
                     }
                     catch (OperationCanceledException)
                     {
                         log.Debug($"Lease renewal cancelled for shard {shardId}");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex, $"Error renewing lease for shard {shardId}, stopping lease renewal");
                         break;
                     }
                 }
