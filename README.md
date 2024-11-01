@@ -67,6 +67,7 @@ A module for integrating Amazon Kinesis Data Streams with Decisions automation p
    * Store securely
    * Use minimal permissions
 
+Assume role can be used e.g. to access Kinesis streams in other AWS accounts.
 
 ## JSON Payload Filtering
 
