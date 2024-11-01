@@ -10,6 +10,8 @@ using DecisionsFramework.Utilities;
 
 namespace Decisions.KinesisMessageQueue
 {
+    [AutoRegisterNativeType]
+    [DataContract]
     [ORMEntity("kinesis_checkpoint")]
     public class KinesisCheckpoint : AbstractEntity
     {

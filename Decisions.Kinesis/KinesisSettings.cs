@@ -9,6 +9,8 @@ using Decisions.MessageQueues;
 
 namespace Decisions.KinesisMessageQueue
 {
+    [AutoRegisterNativeType]
+    [DataContract]
     public class KinesisSettings : BaseMqSettings<KinesisMessageQueue>
     {
         public override string LogCategory => "Kinesis";
