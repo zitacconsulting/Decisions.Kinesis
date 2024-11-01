@@ -56,8 +56,9 @@ A module for integrating Amazon Kinesis Data Streams with Decisions automation p
 ## Best Practices
 
 ### Authentication
-1. **Use IAM Roles**
+1. **Default Credentials**
    * Preferred method for AWS authentication
+   * Only works when Decisions is running in AWS
    * Automatic credential rotation
    * Enhanced security
 
