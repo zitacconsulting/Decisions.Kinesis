@@ -79,6 +79,7 @@ Assume role can be used e.g. to access Kinesis streams in other AWS accounts.
     "value": "premium"
 }
 ```
+Will only process records where the property user.type in the record body Equals the value premium. All other messages will be ignored.
 
 ### Supported Operations
 * **Comparison**
@@ -131,8 +132,8 @@ DEBUG   → Detailed operations
 
 2. **Install Module**
    * Open Decisions Portal
-   * Navigate System / Administration / Features
-   * Click Upload and install Module
+   * Navigate to System / Administration / Features
+   * Click "Upload and install Module"
 
 3. **Configure Settings**
    * Set system wide settings in System / Settings / Message Queue Settings / Kinesis Settings (Optional)
