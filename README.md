@@ -79,7 +79,7 @@ Assume role can be used e.g. to access Kinesis streams in other AWS accounts.
     "value": "premium"
 }
 ```
-Will only process records where the property user.type in the record body Equals the value premium. All other messages will be ignored.
+This example will only process records where the property **user.type** in the record body **Equals** the value **premium**. All other records will be ignored.
 
 ### Supported Operations
 * **Comparison**
