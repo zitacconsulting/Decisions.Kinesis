@@ -25,7 +25,7 @@ namespace Decisions.KinesisMessageQueue
         protected AmazonKinesisClient KinesisClient;
         protected string StreamName;
         private string threadId;
-        private readonly ConcurrentDictionary<string, Task> shardProcessingTasks = new();
+        private List<string> shardProcessingTasks;
         private readonly ConcurrentDictionary<string, CancellationTokenSource> shardCancellationTokens = new();
         private const int LEASE_RENEWAL_INTERVAL_SECONDS = 30;
         private const int SHARD_ACQUISITION_DELAY_SECONDS = 5;
@@ -178,12 +178,13 @@ namespace Decisions.KinesisMessageQueue
                             break;
 
                         // Skip if we're already processing this shard (Cant check only the lease for this since another task in this thread might be processing the shard)
-                        if (shardProcessingTasks.ContainsKey(shard.ShardId))
+                        if (shardProcessingTasks.Contains(shard.ShardId))
                             continue;
 
                         // Try to acquire lease
                         if (KinesisCheckpointer.AcquireLease(StreamName, queueDefinition.Id, shard.ShardId, threadId))
                         {
+                            shardProcessingTasks.Add(shard.ShardId);
                             // Create cancellation token source for this shard
                             var shardCts = new CancellationTokenSource();
                             shardCancellationTokens.TryAdd(shard.ShardId, shardCts);
@@ -201,13 +202,11 @@ namespace Decisions.KinesisMessageQueue
                                 }
                                 finally
                                 {
-                                    shardProcessingTasks.TryRemove(shard.ShardId, out _);
+                                    shardProcessingTasks.Remove(shard.ShardId);
                                     shardCancellationTokens.TryRemove(shard.ShardId, out var cts);
                                     cts?.Dispose();
                                 }
                             });
-
-                            shardProcessingTasks.TryAdd(shard.ShardId, shardTask);
 
                             // Wait before trying to acquire next shard to allow other nodes to pick up shards
                             Thread.Sleep(TimeSpan.FromSeconds(SHARD_ACQUISITION_DELAY_SECONDS));
@@ -267,12 +266,30 @@ namespace Decisions.KinesisMessageQueue
                             Limit = queueDefinition.MaxRecordsPerRequest
                         };
 
-                        var getRecordsResponse = await backoffRetry.ExecuteAsync(
-                            async () => await KinesisClient.GetRecordsAsync(getRecordsRequest, cancellationToken),
-                            $"GetRecords for shard {shardId}",
-                            cancellationToken
-                        );
-
+                        GetRecordsResponse getRecordsResponse;
+                        try
+                        {
+                            getRecordsResponse = await backoffRetry.ExecuteAsync(
+                                async () => await KinesisClient.GetRecordsAsync(getRecordsRequest, cancellationToken),
+                                $"GetRecords for shard {shardId}",
+                                cancellationToken
+                            );
+                        }
+                        // Specific handling for throughput exception
+                        catch (ProvisionedThroughputExceededException ex)
+                        {
+                            // If we've exceeded retries in backoffRetry, we'll get here
+                            log.Error(ex, $"Exceeded maximum retries for throughput exception on shard {shardId}");
+                            await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
+                            throw;
+                        }
+                        // Catch other exceptions during GetRecords
+                        catch (Exception ex)
+                        {
+                            log.Error(ex, $"Error getting records for shard {shardId}");
+                            await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
+                            throw;
+                        }
 
                         // Process records
                         if (getRecordsResponse.Records.Count > 0)
@@ -281,29 +298,31 @@ namespace Decisions.KinesisMessageQueue
                             LastActiveTime = DateUtilities.FastNow(0L);
                             foreach (var record in getRecordsResponse.Records)
                             {
-                                // Use backoff retry for processing each record
-                                await backoffRetry.ExecuteAsync(
-                                    async () =>
-                                    {
-                                        await ProcessRecordAsync(record);
-                                        return true;
-                                    },
-                                    $"ProcessRecord {record.SequenceNumber}",
-                                    cancellationToken
-                                );
+                                try
+                                {
+                                    await backoffRetry.ExecuteAsync(
+                                        async () =>
+                                        {
+                                            await ProcessRecordAsync(record);
+                                            return true;
+                                        },
+                                        $"ProcessRecord {record.SequenceNumber}",
+                                        cancellationToken
+                                    );
+                                }
+                                // Handle record processing failures
+                                catch (Exception ex)
+                                {
+                                    log.Error(ex, $"Failed to process record {record.SequenceNumber}");
+                                    await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
+                                    throw;
+                                }
                             }
 
                             // Save checkpoint after processing batch
                             var lastRecord = getRecordsResponse.Records.Last();
-                            await backoffRetry.ExecuteAsync(
-                                async () =>
-                                {
-                                    KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, lastRecord.SequenceNumber);
-                                    return true;
-                                },
-                                $"SaveCheckpoint for shard {shardId}",
-                                cancellationToken
-                            );
+                            KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, lastRecord.SequenceNumber);
+
                         }
                         else
                         {
@@ -328,11 +347,7 @@ namespace Decisions.KinesisMessageQueue
                             await Task.Delay(TimeSpan.FromSeconds(queueDefinition.ShardBatchWaitTime), cancellationToken);
                         }
                     }
-                    catch (ProvisionedThroughputExceededException)
-                    {
-                        // Let the BackoffRetry handle the retry logic for rate limiting
-                        throw;
-                    }
+
                     catch (Exception ex)
                     {
                         log.Error(ex, $"[{ThreadDescription}] Error processing shard {shardId}");
@@ -341,12 +356,12 @@ namespace Decisions.KinesisMessageQueue
                     }
                 }
 
-                await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
             }
             finally
             {
                 try
                 {
+                    await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
                     KinesisCheckpointer.ReleaseLease(StreamName, queueDefinition.Id, shardId, threadId);
                     log.Debug($"[{ThreadDescription}] Released lease for shard {shardId}");
                 }
