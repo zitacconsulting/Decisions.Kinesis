@@ -25,7 +25,7 @@ namespace Decisions.KinesisMessageQueue
         protected AmazonKinesisClient KinesisClient;
         protected string StreamName;
         private string threadId;
-        private readonly List<string> shardProcessingTasks = new List<string>(); 
+        private readonly List<string> shardProcessingTasks = new List<string>();
         private readonly ConcurrentDictionary<string, CancellationTokenSource> shardCancellationTokens = new();
         private const int LEASE_RENEWAL_INTERVAL_SECONDS = 30;
         private const int SHARD_ACQUISITION_DELAY_SECONDS = 5;
@@ -81,7 +81,7 @@ namespace Decisions.KinesisMessageQueue
                     catch (Exception ex)
                     {
                         // Don't retry on other exceptions
-                        log.Error(ex, $"Non-retryable error during {operationName}");
+                        log.Error($"Non-retryable error during {operationName}: {ex.Message}");
                         throw;
                     }
 
@@ -93,9 +93,11 @@ namespace Decisions.KinesisMessageQueue
             {
                 // Calculate delay with exponential backoff and jitter
                 int delaySeconds = CalculateDelay(attempt);
+                string errorMessage = ex is AmazonKinesisException akex ? $"{akex.ErrorCode}: {akex.Message}" : ex.Message;
 
-                log.Warn($"{ex.GetType().Name} during {operationName}. Attempt {attempt + 1}/{maxRetries}. " +
-                         $"Retrying in {delaySeconds} seconds. Error: {ex.Message}");
+                log.Warn($"{ex.GetType().Name} during {operationName}. " +
+                         $"Attempt {attempt + 1}/{maxRetries}. " +
+                         $"Retrying in {delaySeconds} seconds. Error: {errorMessage}");
 
                 await Task.Delay(TimeSpan.FromSeconds(delaySeconds), cancellationToken);
             }
@@ -282,14 +284,14 @@ namespace Decisions.KinesisMessageQueue
                         catch (ProvisionedThroughputExceededException ex)
                         {
                             // If we've exceeded retries in backoffRetry, we'll get here
-                            log.Error(ex, $"[Shard {shardId}] Throughput exceeded, max retries reached. Will retry after backoff.");
+                            log.Error($"[Shard {shardId}] Throughput exceeded, max retries reached: {ex.Message}");
                             await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
                             throw;
                         }
                         // Catch other exceptions during GetRecords
                         catch (Exception ex)
                         {
-                            log.Error(ex, $"Error getting records for shard {shardId}");
+                            log.Error($"[Shard {shardId}] Error getting records: {FormatErrorMessage(ex)}");
                             await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
                             throw;
                         }
@@ -317,7 +319,7 @@ namespace Decisions.KinesisMessageQueue
                                 // Handle record processing failures
                                 catch (Exception ex)
                                 {
-                                    log.Error(ex, $"[Shard {shardId}] Failed to process record {record.SequenceNumber}");
+                                    log.Error($"[Shard {shardId}] Failed to process record {record.SequenceNumber}: {FormatErrorMessage(ex)}");
                                     await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
                                     throw;
                                 }
@@ -356,7 +358,7 @@ namespace Decisions.KinesisMessageQueue
 
                     catch (Exception ex)
                     {
-                        log.Error(ex, $"[Shard {shardId}] Error in processing loop");
+                        log.Error($"[Shard {shardId}] Error in processing loop: {FormatErrorMessage(ex)}");
                         await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
                         throw;
                     }
@@ -373,7 +375,7 @@ namespace Decisions.KinesisMessageQueue
                 }
                 catch (Exception ex)
                 {
-                    log.Error(ex, $"[Shard {shardId}] Error during cleanup");
+                    log.Error($"[Shard {shardId}] Error during cleanup: {FormatErrorMessage(ex)}");
                 }
             }
         }
@@ -632,6 +634,15 @@ namespace Decisions.KinesisMessageQueue
             }
 
             return true; // All filters matched
+        }
+
+        private string FormatErrorMessage(Exception ex)
+        {
+            if (ex is AmazonKinesisException akex)
+            {
+                return $"Kinesis error: {akex.Message} (ErrorCode: {akex.ErrorCode}, StatusCode: {akex.StatusCode})";
+            }
+            return $"Error: {ex.GetType().Name} - {ex.Message}";
         }
         protected override void CleanUp()
         {
