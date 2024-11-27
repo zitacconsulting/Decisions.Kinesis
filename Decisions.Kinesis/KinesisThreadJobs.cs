@@ -521,7 +521,7 @@ namespace Decisions.KinesisMessageQueue
                     try
                     {
                         JObject jsonPayload = JObject.Parse(messageText);
-                        if (!ApplyPayloadFilters(jsonPayload, queueDefinition.PayloadFilters))
+                        if (!ApplyPayloadFilters(jsonPayload, queueDefinition.PayloadFilters, queueDefinition.UseOr))
                         {
                             log.Debug($"Record {messageId} filtered out based on payload filters");
                             return;
@@ -553,13 +553,15 @@ namespace Decisions.KinesisMessageQueue
 
 
 
-        private bool ApplyPayloadFilters(JObject payload, KinesisPayloadFilter.PayloadFilter[] filters)
+        private bool ApplyPayloadFilters(JObject payload, KinesisPayloadFilter.PayloadFilter[] filters, bool useOr = false)
         {
+
             foreach (var filter in filters)
             {
                 JToken value = payload.SelectToken(filter.Property);
                 if (value == null)
                 {
+                    if (useOr) continue;
                     return false; // Property not found, filter fails
                 }
 
@@ -627,13 +629,13 @@ namespace Decisions.KinesisMessageQueue
                         return false;
                 }
 
-                if (!matches)
-                {
-                    return false; // If any filter doesn't match, return false
-                }
+                if (useOr && matches)
+                    return true;  // OR logic: return true if any filter matches
+                else if (!useOr && !matches)
+                    return false; // AND logic: return false if any filter doesn't match
             }
 
-            return true; // All filters matched
+            return !useOr; // true for AND (all matched), false for OR (none matched)
         }
 
         private string FormatErrorMessage(Exception ex)

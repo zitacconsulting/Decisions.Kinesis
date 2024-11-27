@@ -77,6 +77,18 @@ namespace Decisions.KinesisMessageQueue
 
         [ORMField]
         [WritableValue]
+        private bool useOr;
+
+        [DataMember]
+        [PropertyClassification(5, "Match Filters using OR", "1 Definition")]
+        public bool UseOr
+        {
+            get { return useOr; }
+            set { useOr = value; }
+        }
+
+        [ORMField]
+        [WritableValue]
         private int maxRecordsPerRequest = 100;
 
         [DataMember]
