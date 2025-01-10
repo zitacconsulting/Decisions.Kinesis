@@ -5,9 +5,6 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="DecisionsSDK" Version="9.1.0" />
-	</ItemGroup>
-	<ItemGroup>
 		<Reference Include="DecisionsMessageQueues">
 			<HintPath>..\Decisions.MessageQueues.dll</HintPath>
 		</Reference>
@@ -23,5 +20,8 @@
 		<Reference Include="Newtonsoft.Json">
 			<HintPath>..\Newtonsoft.Json.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="DecisionsSDK" Version="9.5.0" />
 	</ItemGroup>
 </Project>
