@@ -14,6 +14,7 @@ using DecisionsFramework.ServiceLayer.Services.ContextData;
 using DecisionsFramework.ServiceLayer.Utilities;
 using Decisions.MessageQueues;
 using Newtonsoft.Json.Linq;
+using System.IO;
 
 namespace Decisions.KinesisMessageQueue
 {
@@ -25,6 +26,7 @@ namespace Decisions.KinesisMessageQueue
         protected AmazonKinesisClient KinesisClient;
         protected string StreamName;
         private string threadId;
+        private string consumerArn;
         private readonly List<string> shardProcessingTasks = new List<string>();
         private readonly ConcurrentDictionary<string, CancellationTokenSource> shardCancellationTokens = new();
         private const int LEASE_RENEWAL_INTERVAL_SECONDS = 30;
@@ -125,7 +127,27 @@ namespace Decisions.KinesisMessageQueue
                 StreamName = queueDefinition.StreamName;
                 // Generate a unique thread ID for this job
                 threadId = $"{Environment.MachineName}-{Guid.NewGuid()}";
-                log.Info($"Kinesis client set up successfully. ThreadId: {threadId}");
+                
+                // If using Enhanced Fan-Out, resolve consumer ARN if needed
+                if (queueDefinition.UseEnhancedFanOut)
+                {
+                    if (!string.IsNullOrEmpty(queueDefinition.ConsumerArn))
+                    {
+                        consumerArn = queueDefinition.ConsumerArn;
+                        log.Info($"Using provided Consumer ARN: {consumerArn}");
+                    }
+                    else if (!string.IsNullOrEmpty(queueDefinition.ConsumerName))
+                    {
+                        consumerArn = await ResolveConsumerArnAsync(queueDefinition.ConsumerName);
+                        log.Info($"Resolved Consumer ARN from name '{queueDefinition.ConsumerName}': {consumerArn}");
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Enhanced Fan-Out requires either Consumer ARN or Consumer Name");
+                    }
+                }
+                
+                log.Info($"Kinesis client set up successfully. ThreadId: {threadId}, EFO: {queueDefinition.UseEnhancedFanOut}");
             }
             catch (Exception ex)
             {
@@ -136,6 +158,45 @@ namespace Decisions.KinesisMessageQueue
 
         }
 
+
+        private async Task<string> ResolveConsumerArnAsync(string consumerName)
+        {
+            try
+            {
+                var request = new DescribeStreamConsumerRequest
+                {
+                    StreamARN = await GetStreamArnAsync(),
+                    ConsumerName = consumerName
+                };
+
+                var response = await KinesisClient.DescribeStreamConsumerAsync(request);
+                return response.ConsumerDescription.ConsumerARN;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex, $"Error resolving consumer ARN for consumer name: {consumerName}");
+                throw;
+            }
+        }
+
+        private async Task<string> GetStreamArnAsync()
+        {
+            try
+            {
+                var request = new DescribeStreamRequest
+                {
+                    StreamName = StreamName
+                };
+
+                var response = await KinesisClient.DescribeStreamAsync(request);
+                return response.StreamDescription.StreamARN;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex, $"Error getting stream ARN for stream: {StreamName}");
+                throw;
+            }
+        }
 
         private async Task<List<Shard>> GetShardsAsync()
         {
@@ -230,7 +291,7 @@ namespace Decisions.KinesisMessageQueue
 
         private async Task ProcessShardAsync(string shardId, BackoffRetry backoffRetry, CancellationToken cancellationToken)
         {
-            log.Info($"[Shard {shardId}] Starting shard processing");
+            log.Info($"[Shard {shardId}] Starting shard processing (EFO: {queueDefinition.UseEnhancedFanOut})");
             using var leaseRenewalCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             Task leaseRenewalTask = null;
 
@@ -238,132 +299,14 @@ namespace Decisions.KinesisMessageQueue
             {
                 leaseRenewalTask = StartLeaseRenewalAsync(shardId, leaseRenewalCts.Token);
 
-                string shardIterator;
-                try
+                if (queueDefinition.UseEnhancedFanOut)
                 {
-                    shardIterator = await GetShardIteratorAsync(shardId);
-                    if (shardIterator == null)
-                    {
-                        log.Warn($"[Shard {shardId}] Failed to get shard iterator, stopping processing");
-                        await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
-                        return;
-                    }
+                    await ProcessShardWithEnhancedFanOutAsync(shardId, backoffRetry, cancellationToken);
                 }
-                catch (Exception ex)
+                else
                 {
-                    bool shouldReleaseCheckpoint = ex is InvalidArgumentException &&
-                                                 ex.Message.Contains("StartingSequenceNumber");
-
-                    log.Error(ex, $"Failed to get shard iterator for {shardId}. {(shouldReleaseCheckpoint ? "Checkpoint will be reset." : "Checkpoint will be preserved.")}");
-
-                    await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
-                    throw;
+                    await ProcessShardWithPollingAsync(shardId, backoffRetry, cancellationToken);
                 }
-
-                while (!cancellationToken.IsCancellationRequested && !isShuttingDown)
-                {
-                    try
-                    {
-                        var getRecordsRequest = new GetRecordsRequest
-                        {
-                            ShardIterator = shardIterator,
-                            Limit = queueDefinition.MaxRecordsPerRequest
-                        };
-
-                        GetRecordsResponse getRecordsResponse;
-                        try
-                        {
-                            getRecordsResponse = await backoffRetry.ExecuteAsync(
-                                async () => await KinesisClient.GetRecordsAsync(getRecordsRequest, cancellationToken),
-                                $"GetRecords for shard {shardId}",
-                                cancellationToken
-                            );
-                            log.Debug($"[Shard {shardId}] Retrieved {getRecordsResponse.Records.Count} records");
-                        }
-                        // Specific handling for throughput exception
-                        catch (ProvisionedThroughputExceededException ex)
-                        {
-                            // If we've exceeded retries in backoffRetry, we'll get here
-                            log.Error($"[Shard {shardId}] Throughput exceeded, max retries reached: {ex.Message}");
-                            await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
-                            throw;
-                        }
-                        // Catch other exceptions during GetRecords
-                        catch (Exception ex)
-                        {
-                            log.Error($"[Shard {shardId}] Error getting records: {FormatErrorMessage(ex)}");
-                            await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
-                            throw;
-                        }
-
-                        // Process records
-                        if (getRecordsResponse.Records.Count > 0)
-                        {
-                            IsActive = true;
-                            LastActiveTime = DateUtilities.FastNow(0L);
-                            log.Info($"[Shard {shardId}] Processing batch of {getRecordsResponse.Records.Count} records");
-                            foreach (var record in getRecordsResponse.Records)
-                            {
-                                try
-                                {
-                                    await backoffRetry.ExecuteAsync(
-                                        async () =>
-                                        {
-                                            await ProcessRecordAsync(record);
-                                            return true;
-                                        },
-                                        $"ProcessRecord {record.SequenceNumber}",
-                                        cancellationToken
-                                    );
-                                }
-                                // Handle record processing failures
-                                catch (Exception ex)
-                                {
-                                    log.Error($"[Shard {shardId}] Failed to process record {record.SequenceNumber}: {FormatErrorMessage(ex)}");
-                                    await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
-                                    throw;
-                                }
-                            }
-
-                            // Save checkpoint after processing batch
-                            var lastRecord = getRecordsResponse.Records.Last();
-                            log.Info($"[Shard {shardId}] Successfully processed batch. Last sequence: {lastRecord.SequenceNumber}");
-                            KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, lastRecord.SequenceNumber);
-
-                        }
-                        else
-                        {
-                            IsActive = false;
-                            log.Debug($"[Shard {shardId}] No records available");
-                        }
-
-                        // Check if we've reached the end of the shard
-                        if (string.IsNullOrEmpty(getRecordsResponse.NextShardIterator))
-                        {
-                            log.Info($"[Shard {shardId}] Reached end of shard, stopping processing");
-                            break;
-                        }
-
-                        shardIterator = getRecordsResponse.NextShardIterator;
-
-                        if (getRecordsResponse.Records.Count < queueDefinition.MaxRecordsPerRequest)
-                        {
-                            await Task.Delay(TimeSpan.FromSeconds(queueDefinition.ShardPollInterval), cancellationToken);
-                        }
-                        else
-                        {
-                            await Task.Delay(TimeSpan.FromSeconds(queueDefinition.ShardBatchWaitTime), cancellationToken);
-                        }
-                    }
-
-                    catch (Exception ex)
-                    {
-                        log.Error($"[Shard {shardId}] Error in processing loop: {FormatErrorMessage(ex)}");
-                        await CancelAndWaitForLeaseRenewal(leaseRenewalCts, leaseRenewalTask, shardId);
-                        throw;
-                    }
-                }
-
             }
             finally
             {
@@ -377,6 +320,238 @@ namespace Decisions.KinesisMessageQueue
                 {
                     log.Error($"[Shard {shardId}] Error during cleanup: {FormatErrorMessage(ex)}");
                 }
+            }
+        }
+
+        private async Task ProcessShardWithPollingAsync(string shardId, BackoffRetry backoffRetry, CancellationToken cancellationToken)
+        {
+            string shardIterator;
+            try
+            {
+                shardIterator = await GetShardIteratorAsync(shardId);
+                if (shardIterator == null)
+                {
+                    log.Warn($"[Shard {shardId}] Failed to get shard iterator, stopping processing");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                bool shouldReleaseCheckpoint = ex is InvalidArgumentException &&
+                                             ex.Message.Contains("StartingSequenceNumber");
+
+                log.Error(ex, $"Failed to get shard iterator for {shardId}. {(shouldReleaseCheckpoint ? "Checkpoint will be reset." : "Checkpoint will be preserved.")}");
+                throw;
+            }
+
+            while (!cancellationToken.IsCancellationRequested && !isShuttingDown)
+            {
+                try
+                {
+                    var getRecordsRequest = new GetRecordsRequest
+                    {
+                        ShardIterator = shardIterator,
+                        Limit = queueDefinition.MaxRecordsPerRequest
+                    };
+
+                    GetRecordsResponse getRecordsResponse;
+                    try
+                    {
+                        getRecordsResponse = await backoffRetry.ExecuteAsync(
+                            async () => await KinesisClient.GetRecordsAsync(getRecordsRequest, cancellationToken),
+                            $"GetRecords for shard {shardId}",
+                            cancellationToken
+                        );
+                        log.Debug($"[Shard {shardId}] Retrieved {getRecordsResponse.Records.Count} records");
+                    }
+                    catch (ProvisionedThroughputExceededException ex)
+                    {
+                        log.Error($"[Shard {shardId}] Throughput exceeded, max retries reached: {ex.Message}");
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error($"[Shard {shardId}] Error getting records: {FormatErrorMessage(ex)}");
+                        throw;
+                    }
+
+                    // Process records
+                    if (getRecordsResponse.Records.Count > 0)
+                    {
+                        IsActive = true;
+                        LastActiveTime = DateUtilities.FastNow(0L);
+                        log.Info($"[Shard {shardId}] Processing batch of {getRecordsResponse.Records.Count} records");
+                        foreach (var record in getRecordsResponse.Records)
+                        {
+                            try
+                            {
+                                await backoffRetry.ExecuteAsync(
+                                    async () =>
+                                    {
+                                        await ProcessRecordAsync(record);
+                                        return true;
+                                    },
+                                    $"ProcessRecord {record.SequenceNumber}",
+                                    cancellationToken
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error($"[Shard {shardId}] Failed to process record {record.SequenceNumber}: {FormatErrorMessage(ex)}");
+                                throw;
+                            }
+                        }
+
+                        // Save checkpoint after processing batch
+                        var lastRecord = getRecordsResponse.Records.Last();
+                        log.Info($"[Shard {shardId}] Successfully processed batch. Last sequence: {lastRecord.SequenceNumber}");
+                        KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, lastRecord.SequenceNumber);
+                    }
+                    else
+                    {
+                        IsActive = false;
+                        log.Debug($"[Shard {shardId}] No records available");
+                    }
+
+                    // Check if we've reached the end of the shard
+                    if (string.IsNullOrEmpty(getRecordsResponse.NextShardIterator))
+                    {
+                        log.Info($"[Shard {shardId}] Reached end of shard, stopping processing");
+                        break;
+                    }
+
+                    shardIterator = getRecordsResponse.NextShardIterator;
+
+                    if (getRecordsResponse.Records.Count < queueDefinition.MaxRecordsPerRequest)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(queueDefinition.ShardPollInterval), cancellationToken);
+                    }
+                    else
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(queueDefinition.ShardBatchWaitTime), cancellationToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error($"[Shard {shardId}] Error in polling processing loop: {FormatErrorMessage(ex)}");
+                    throw;
+                }
+            }
+        }
+
+        private async Task ProcessShardWithEnhancedFanOutAsync(string shardId, BackoffRetry backoffRetry, CancellationToken cancellationToken)
+        {
+            log.Info($"[Shard {shardId}] Starting Enhanced Fan-Out processing");
+
+            string checkpoint = KinesisCheckpointer.GetCheckpoint(StreamName, queueDefinition.Id, shardId);
+            
+            var request = new SubscribeToShardRequest
+            {
+                ConsumerARN = consumerArn,
+                ShardId = shardId,
+                StartingPosition = GetStartingPosition(checkpoint)
+            };
+
+            try
+            {
+                var response = await backoffRetry.ExecuteAsync(
+                    async () => await KinesisClient.SubscribeToShardAsync(request, cancellationToken),
+                    $"SubscribeToShard for shard {shardId}",
+                    cancellationToken
+                );
+
+                log.Info($"[Shard {shardId}] Successfully subscribed to shard with EFO");
+
+                // Process the event stream
+                var eventStream = response.EventStream;
+                
+                await foreach (var subscribeToShardEvent in eventStream)
+                {
+                    if (cancellationToken.IsCancellationRequested || isShuttingDown)
+                        break;
+
+                    if (subscribeToShardEvent is SubscribeToShardEvent recordsEvent)
+                    {
+                        var records = recordsEvent.Records;
+                        
+                        if (records.Count > 0)
+                        {
+                            IsActive = true;
+                            LastActiveTime = DateUtilities.FastNow(0L);
+                            log.Info($"[Shard {shardId}] EFO: Processing batch of {records.Count} records");
+
+                            foreach (var record in records)
+                            {
+                                try
+                                {
+                                    await backoffRetry.ExecuteAsync(
+                                        async () =>
+                                        {
+                                            await ProcessRecordAsync(record);
+                                            return true;
+                                        },
+                                        $"ProcessRecord {record.SequenceNumber}",
+                                        cancellationToken
+                                    );
+                                }
+                                catch (Exception ex)
+                                {
+                                    log.Error($"[Shard {shardId}] Failed to process EFO record {record.SequenceNumber}: {FormatErrorMessage(ex)}");
+                                    throw;
+                                }
+                            }
+
+                            // Save checkpoint after processing batch
+                            var lastRecord = records.Last();
+                            log.Info($"[Shard {shardId}] EFO: Successfully processed batch. Last sequence: {lastRecord.SequenceNumber}");
+                            KinesisCheckpointer.SaveCheckpoint(StreamName, queueDefinition.Id, shardId, lastRecord.SequenceNumber);
+                        }
+                        else
+                        {
+                            IsActive = false;
+                            log.Debug($"[Shard {shardId}] EFO: No records in this batch");
+                        }
+
+                        // Check for continuation
+                        if (recordsEvent.ContinuationSequenceNumber == null)
+                        {
+                            log.Info($"[Shard {shardId}] EFO: Shard has been closed");
+                            break;
+                        }
+                    }
+                }
+
+                log.Info($"[Shard {shardId}] EFO subscription ended");
+            }
+            catch (Exception ex)
+            {
+                log.Error($"[Shard {shardId}] Error in EFO processing: {FormatErrorMessage(ex)}");
+                throw;
+            }
+        }
+
+        private StartingPosition GetStartingPosition(string checkpoint)
+        {
+            if (checkpoint != null)
+            {
+                log.Debug($"Using checkpoint to start reading from sequence number: {checkpoint}");
+                return new StartingPosition
+                {
+                    Type = ShardIteratorType.AFTER_SEQUENCE_NUMBER,
+                    SequenceNumber = checkpoint
+                };
+            }
+
+            switch (queueDefinition.InitialStreamPosition)
+            {
+                case "Start from oldest record":
+                    log.Debug("EFO: Starting from the oldest record (TRIM_HORIZON)");
+                    return new StartingPosition { Type = ShardIteratorType.TRIM_HORIZON };
+                case "Start from latest record":
+                    log.Debug("EFO: Starting from the latest record (LATEST)");
+                    return new StartingPosition { Type = ShardIteratorType.LATEST };
+                default:
+                    throw new ArgumentException($"Invalid InitialStreamPosition: {queueDefinition.InitialStreamPosition}");
             }
         }
         private async Task CancelAndWaitForLeaseRenewal(CancellationTokenSource cts, Task leaseRenewalTask, string shardId)

@@ -152,7 +152,7 @@ namespace Decisions.KinesisMessageQueue
                 {
                     new DataPair("PartitionKey", record.PartitionKey),
                     new DataPair("SequenceNumber", record.SequenceNumber),
-                    new DataPair("ApproximateArrivalTimestamp", record.ApproximateArrivalTimestamp.ToString("o"))
+                    new DataPair("ApproximateArrivalTimestamp", record.ApproximateArrivalTimestamp.ToString())
                 };
             }
             catch (Exception ex)

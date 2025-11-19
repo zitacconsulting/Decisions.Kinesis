@@ -89,10 +89,72 @@ namespace Decisions.KinesisMessageQueue
 
         [ORMField]
         [WritableValue]
+        private bool useEnhancedFanOut;
+
+        [DataMember]
+        [PropertyClassification(6, "Use Enhanced Fan-Out", "1 Definition")]
+        public bool UseEnhancedFanOut
+        {
+            get { return useEnhancedFanOut; }
+            set
+            {
+                useEnhancedFanOut = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ReadonlyEditor]
+        [PropertyClassification(7, "Enhanced Fan-Out Info", new string[] { "1 Definition" })]
+        [BooleanPropertyHidden(nameof(UseEnhancedFanOut), false)]
+        public string EnhancedFanOutNote
+        {
+            get => "Enhanced Fan-Out provides dedicated throughput for each consumer. You must register a consumer for your stream in AWS and provide either the Consumer ARN or Consumer Name below.";
+            set
+            {
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        private string consumerArn;
+
+        [DataMember]
+        [PropertyClassification(8, "Consumer ARN", "1 Definition")]
+        [BooleanPropertyHidden(nameof(UseEnhancedFanOut), false)]
+        public string ConsumerArn
+        {
+            get { return consumerArn; }
+            set
+            {
+                consumerArn = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
+        private string consumerName;
+
+        [DataMember]
+        [PropertyClassification(9, "Consumer Name", "1 Definition")]
+        [BooleanPropertyHidden(nameof(UseEnhancedFanOut), false)]
+        public string ConsumerName
+        {
+            get { return consumerName; }
+            set
+            {
+                consumerName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        [ORMField]
+        [WritableValue]
         private int maxRecordsPerRequest = 100;
 
         [DataMember]
         [PropertyClassification(11, "Max Records Per Request", "2 Advanced")]
+        [BooleanPropertyHidden(nameof(UseEnhancedFanOut), true)]
         public int MaxRecordsPerRequest
         {
             get { return maxRecordsPerRequest; }
@@ -137,6 +199,7 @@ namespace Decisions.KinesisMessageQueue
 
         [ReadonlyEditor]
         [PropertyClassification(2, "Polling Settings", new string[] { "2 Advanced" })]
+        [BooleanPropertyHidden(nameof(UseEnhancedFanOut), true)]
         public string InputTypeANote2
         {
             get => "'Shard Poll Interval' defines how long to wait before checking for new messages in the shard. 'Shard Wait Between Batches Interval' defines how long to wait between batches if there are more messages than 'Max Records Per Requests' in the shard";
@@ -151,6 +214,7 @@ namespace Decisions.KinesisMessageQueue
 
         [DataMember]
         [PropertyClassification(15, "Shard Poll Interval (seconds)", "2 Advanced")]
+        [BooleanPropertyHidden(nameof(UseEnhancedFanOut), true)]
         public int ShardPollInterval
         {
             get { return shardPollInterval; }
@@ -360,8 +424,17 @@ namespace Decisions.KinesisMessageQueue
             if (string.IsNullOrEmpty(InitialStreamPosition))
                 issues.Add(new ValidationIssue(this, "Initial Stream Position must be selected", "", BreakLevel.Fatal));
 
-            if (MaxRecordsPerRequest < 1 || MaxRecordsPerRequest > 10000)
+            if (!UseEnhancedFanOut && (MaxRecordsPerRequest < 1 || MaxRecordsPerRequest > 10000))
                 issues.Add(new ValidationIssue(this, "Max Records Per Request must be between 1 and 10000", "", BreakLevel.Fatal));
+
+            if (UseEnhancedFanOut)
+            {
+                if (string.IsNullOrEmpty(ConsumerArn) && string.IsNullOrEmpty(ConsumerName))
+                    issues.Add(new ValidationIssue(this, "Either Consumer ARN or Consumer Name must be provided when using Enhanced Fan-Out", "", BreakLevel.Fatal));
+
+                if (!string.IsNullOrEmpty(ConsumerArn) && !string.IsNullOrEmpty(ConsumerName))
+                    issues.Add(new ValidationIssue(this, "Provide either Consumer ARN or Consumer Name, not both", "", BreakLevel.Fatal));
+            }
 
             if (MaxRetries < 0)
                 issues.Add(new ValidationIssue(this, "Max Retries must be a non-negative integer", "", BreakLevel.Fatal));

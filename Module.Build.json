@@ -16,15 +16,11 @@
         "ObjectsToImport": null,
         "MsSqlScript": null
     },
-    "Version": "9.8.0",
+    "Version": "9.15.0",
     "ImagePath": "kinesis.png",
     "Dependencies": [{
         "ModuleName": "Decisions.MessageQueues.zip",
         "AutoInstall": true
-    },
-    {
-        "ModuleName": "Decisions.AWS.zip",
-        "AutoInstall": true
     }],
     "Description": "The Kinesis module integrates Amazon Kinesis, a powerful, real-time data streaming service, into the Decisions platform. Amazon Kinesis enables the collection, processing, and analysis of streaming data at any scale, making it ideal for handling large volumes of data from various sources in real-time."
-}
+} 
