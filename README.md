@@ -12,9 +12,10 @@ Decisions module to integrate Amazon Kinesis Data Streams for real-time message 
 ## Quick Start
 
 1. Install the module via Decisions Portal (System > Administration > Features).
-2. Add `Decisions.Kinesis` to your Project modules.
-3. Configure Kinesis settings (Manage > Jobs & Events > Kinesis Settings).
-4. Create a Kinesis Queue (Manage > Jobs & Events > Queues) and bind a Queue Handler.
+2. (Optional) Add global configuration of Kinesis in System > Settings > Message Queue Settings > Kinesis Settings
+3. Add `Decisions.Kinesis` to your Project as a Dependency.
+4. Configure Kinesis settings (Manage > Jobs & Events > Kinesis Settings).
+5. Create a Kinesis Queue (Manage > Jobs & Events > Queues) and bind a Queue Handler.
 
 ## Key Configuration (high level)
 
