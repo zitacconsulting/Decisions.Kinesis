@@ -1,146 +1,70 @@
 # Decisions Kinesis Module
 
-A module for integrating Amazon Kinesis Data Streams with Decisions automation platform. This module enables real-time data streaming and processing capabilities within Decisions.
+A concise Decisions module to integrate Amazon Kinesis Data Streams for real-time message processing.
 
 ## Features
 
-* **Stream Management**
-  * Connect to and manage Kinesis data streams
-* **Flexible Authentication**
-  * Default AWS credentials
-  * Static credentials (Access Key/Secret)
-  * IAM Role assumption
-* **Message Processing**
-  * Configurable batch size and polling intervals
-  * Automatic checkpoint management
-  * Fault-tolerant message processing
-  * Support for multiple shards processing
-* **JSON Payload Filtering**
-  * Advanced filtering capabilities for JSON messages
-  * Multiple comparison operations
-  * Case-sensitive and insensitive options
-* **Distributed Processing**
-  * Distributed lease management for shards
-  * Automatic lease renewal
-  * Graceful failover handling
+- Stream management and flexible authentication (default, static, assume role)
+- Message processing with checkpointing, retries, and shard lease management
+- JSON payload filtering with common comparison and numeric operators
+- **Enhanced Fan‑Out (EFO)** support (SubscribeToShard streaming)
 
-## Configuration Settings
+## Quick Start
 
-### Global Settings
+1. Install the module via Decisions Portal (System > Administration > Features).
+2. Add `Decisions.Kinesis` to your Project modules.
+3. Configure Kinesis settings (Manage > Jobs & Events > Kinesis Settings).
+4. Create a Kinesis Queue (Manage > Jobs & Events > Queues) and bind a Queue Handler.
 
-```markdown
-└── AWS Configuration
-    ├── Region Selection
-    ├── Authentication Method
-    │   ├── Default Credentials
-    │   └── Static Credentials
-    ├── Access Keys (for static auth)
-    └── Role ARN (optional)
-```
+## Key Configuration (high level)
 
-### Queue Settings
+- `StreamName` — Kinesis stream name
+- `InitialStreamPosition` — `Start from oldest` | `Start from latest`
+- `MaxRecordsPerRequest`, `MaxRetries`, `ErrorBackoffTime`, `ShardPollInterval`, `ShardBatchWaitTime`
 
-#### Basic Configuration
-| Setting | Description |
-|---------|-------------|
-| Stream Name | Name of the Kinesis stream to connect to |
-| Initial Position | Choose where to start reading (oldest/latest) |
+### Enhanced Fan‑Out (EFO)
 
-#### Advanced Settings
-| Setting | Range | Description |
-|---------|-------|-------------|
-| Max Records | 1-10000 | Records per request |
-| Max Retries | ≥ 0 | Retry attempts |
-| Request Timeout | ≥ 1s | AWS request timeout |
+- `UseEnhancedFanOut` (boolean) — enable streaming via SubscribeToShard
+- When `UseEnhancedFanOut = true`, provide either `ConsumerArn` or `ConsumerName` (one is required)
 
-## Best Practices
+Note: With EFO the module subscribes to shard events (push-style streaming). Without EFO it uses periodic GetRecords polling. Checkpointing and lease handling remain the same.
 
-### Authentication
-1. **Default Credentials**
-   * Preferred method for AWS authentication
-   * Only works when Decisions is running in AWS
-   * Automatic credential rotation
-   * Enhanced security
+## JSON Payload Filters
 
-2. **Static Credentials**
-   * Regular key rotation required
-   * Store securely
-   * Use minimal permissions
+Example filter:
 
-Assume role can be used e.g. to access Kinesis streams in other AWS accounts.
-
-## JSON Payload Filtering
-
-### Filter Configuration
 ```json
 {
-    "property": "user.type",
-    "verb": "Equals",
-    "value": "premium"
+  "property": "user.type",
+  "verb": "Equals",
+  "value": "premium"
 }
 ```
-This example will only process records where the property **user.type** in the record body **Equals** the value **premium**. All other records will be ignored.
 
-### Supported Operations
-* **Comparison**
-  * `Equals`
-  * `Not Equals`
-  * `Contains`
-  * `Starts With`
-  * `Ends With`
-* **Numeric**
-  * `Greater Than`
-  * `Less Than`
-  * `Greater/Less Than or Equal`
+Supported comparisons: `Equals`, `Not Equals`, `Contains`, `Starts With`, `Ends With`, `Greater Than`, `Less Than`, etc.
 
-## Error Handling
+## Error Handling & Retries
 
-### Retry Strategy
-```
-Initial Delay → Exponential Backoff → Max Delay
-     5s      →      10s, 20s...    →    32s
-```
-
-### Handled Exceptions
-* `ProvisionedThroughputExceededException`
-* `LimitExceededException`
-* `5xx Server Errors`
+Exponential backoff with jitter for throughput/limit/5xx errors. Handled exceptions include `ProvisionedThroughputExceededException`, `LimitExceededException`, and 5xx server errors.
 
 ## Monitoring
 
-### Log Levels
-```
-ERROR   → Critical issues
-WARN    → Potential problems
-INFO    → Status updates
-DEBUG   → Detailed operations
-```
+Standard log levels: `ERROR`, `WARN`, `INFO`, `DEBUG`.
+
+## Disclaimer
+
+This module is provided "as is" without warranties of any kind. Use it at your own risk. The authors, maintainers, and contributors disclaim all liability for any direct, indirect, incidental, special, or consequential damages, including data loss or service interruption, arising from the use of this software.
 
 ## Requirements
 
-* Decisions Platform 9+
-* AWS Credentials
-* Kinesis Stream Access
+- Decisions Platform 9+
+- AWS credentials with access to target Kinesis stream
 
 ## Installation
 
-1. **Download Module**
-   ```
-   Compiled: [File](./Decisions.Kinesis.zip)
-   Or pull and compile the project.
-   ```
+1. Download or compile the module and upload it via Decisions Portal (System > Administration > Features).
+2. Configure system and queue settings as needed, then create queues and handlers.
 
-2. **Install Module**
-   * Open Decisions Portal
-   * Navigate to System / Administration / Features
-   * Click "Upload and install Module"
+## Changelog
 
-3. **Configure Settings**
-   * Set system wide settings in System / Settings / Message Queue Settings / Kinesis Settings (Optional)
-   * Open a Project and Navigate to Manage / Configuration / Dependencies. Click Manage and choose the Modules tab. Add Decisions.Kinesis.
-   * Navigate to Manage / Jobs & Events / Setting / Kinesis Settings and configure the connection settings
-   * Navigate to Manage / Jobs & Events / Queues and add a new Kinesis Stream.
-   * Navigate to Manage / Jobs & Event / Queue Handlers and create a new handler
-
-4. **Control the Queue**
-   Right click the newly created Queue to Start/Stop/Pause/Test
+- Added: Enhanced Fan‑Out (EFO) support — new queue settings `UseEnhancedFanOut`, `ConsumerArn`/`ConsumerName` and streaming processing.
