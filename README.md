@@ -1,6 +1,6 @@
 # Decisions Kinesis Module
 
-A concise Decisions module to integrate Amazon Kinesis Data Streams for real-time message processing.
+Decisions module to integrate Amazon Kinesis Data Streams for real-time message processing.
 
 ## Features
 
