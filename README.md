@@ -67,7 +67,6 @@ The AWS IAM user/role requires appropriate permissions for Kinesis operations:
 - `kinesis:SubscribeToShard` - For Enhanced Fan-Out (EFO)
 - `kinesis:RegisterStreamConsumer` - Register EFO consumers
 - `kinesis:DescribeStreamConsumer` - Get consumer details
-- DynamoDB permissions for checkpointing (if using DynamoDB for lease management)
 
 ### Dependencies
 - AWS SDK for .NET (Amazon.Kinesis)
@@ -85,17 +84,6 @@ The AWS IAM user/role requires appropriate permissions for Kinesis operations:
 
 ### Option 2: Build and Install
 See the [Building from Source](#building-from-source) section below.
-
-### Post-Installation
-After installation, the Kinesis queue management will be available in:
-```
-Manage > Jobs & Events > Queues > Message Queue Type: Kinesis
-```
-
-Global configuration can be set at:
-```
-System > Settings > Message Queue Settings > Kinesis Settings
-```
 
 ## Quick Start
 
